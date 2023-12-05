@@ -1,0 +1,98 @@
+cd C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main
+
+______________________________________________________
+
+Helper
+
+javac -cp "C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main;C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main\mysqlConnector\mysql-connector-java-8.0.29.jar" utility/Helper.java
+______________________________________________________
+
+DBO Creator
+
+javac -cp "C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main;C:\Users\shoum\Downloads\S2-VLDB-2023-original\S2-VLDB-2023-main\mysqlConnector\mysql-connector-java-8.0.29.jar" src\_00_Database_Table_Creator\Database_Table_Creator.java
+
+
+
+
+
+______________________________________________________
+
+01 - String Search
+
+javac -cp "C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main;C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main\mysqlConnector\mysql-connector-java-8.0.29.jar" src/_01_oneColumnStringSearch/client/*.java src/_01_oneColumnStringSearch/combiner/*.java src/_01_oneColumnStringSearch/server/*.java 
+
+java -cp "C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main;C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main\mysqlConnector\mysql-connector-java-8.0.29.jar" src._01_oneColumnStringSearch.server.Server1
+
+java -cp "C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main;C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main\mysqlConnector\mysql-connector-java-8.0.29.jar" src._01_oneColumnStringSearch.server.Server2
+
+java -cp "C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main;C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main\mysqlConnector\mysql-connector-java-8.0.29.jar" src._01_oneColumnStringSearch.combiner.Combiner
+
+java -cp "C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main;C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main\mysqlConnector\mysql-connector-java-8.0.29.jar" src._01_oneColumnStringSearch.client.Client
+
+
+______________________________________________________
+
+03 - And Search
+
+javac -cp "C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main;C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main\mysqlConnector\mysql-connector-java-8.0.29.jar" src/_03_AND_Search/client/*.java src/_03_AND_Search/combiner/*.java src/_03_AND_Search/server/*.java 
+
+java -cp "C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main;C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main\mysqlConnector\mysql-connector-java-8.0.29.jar" src._03_AND_Search.server.Server1
+
+java -cp "C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main;C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main\mysqlConnector\mysql-connector-java-8.0.29.jar" src._03_AND_Search.server.Server2
+
+java -cp "C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main;C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main\mysqlConnector\mysql-connector-java-8.0.29.jar" src._03_AND_Search.combiner.Combiner
+
+java -cp "C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main;C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main\mysqlConnector\mysql-connector-java-8.0.29.jar" src._03_AND_Search.client.Client
+
+______________________________________________________
+
+04 - OR Search
+
+javac -cp "C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main;C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main\mysqlConnector\mysql-connector-java-8.0.29.jar" src/_04_OR_Search/client/*.java src/_04_OR_Search/combiner/*.java src/_04_OR_Search/server/*.java 
+
+java -cp "C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main;C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main\mysqlConnector\mysql-connector-java-8.0.29.jar" src._04_OR_Search.server.Server1
+
+java -cp "C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main;C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main\mysqlConnector\mysql-connector-java-8.0.29.jar" src._04_OR_Search.server.Server2
+
+java -cp "C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main;C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main\mysqlConnector\mysql-connector-java-8.0.29.jar" src._04_OR_Search.server.Server3
+
+java -cp "C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main;C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main\mysqlConnector\mysql-connector-java-8.0.29.jar" src._04_OR_Search.server.Server4
+
+java -cp "C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main;C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main\mysqlConnector\mysql-connector-java-8.0.29.jar" src._04_OR_Search.combiner.Combiner
+
+java -cp "C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main;C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main\mysqlConnector\mysql-connector-java-8.0.29.jar" src._04_OR_Search.client.Client
+
+______________________________________________________
+
+05 - Multiplicative Row Fetch
+
+javac -cp "C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main;C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main\mysqlConnector\mysql-connector-java-8.0.29.jar" src/_05_Multiplicative_Row_Fetch/client/*.java src/_05_Multiplicative_Row_Fetch/combiner/*.java src/_05_Multiplicative_Row_Fetch/server/*.java 
+
+java -cp "C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main;C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main\mysqlConnector\mysql-connector-java-8.0.29.jar" src._05_Multiplicative_Row_Fetch.server.Server1
+
+java -cp "C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main;C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main\mysqlConnector\mysql-connector-java-8.0.29.jar" src._05_Multiplicative_Row_Fetch.server.Server2
+
+java -cp "C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main;C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main\mysqlConnector\mysql-connector-java-8.0.29.jar" src._05_Multiplicative_Row_Fetch.server.Server3
+
+java -cp "C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main;C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main\mysqlConnector\mysql-connector-java-8.0.29.jar" src._05_Multiplicative_Row_Fetch.server.Server4
+
+java -cp "C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main;C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main\mysqlConnector\mysql-connector-java-8.0.29.jar" src._05_Multiplicative_Row_Fetch.combiner.Combiner
+
+java -cp "C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main;C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main\mysqlConnector\mysql-connector-java-8.0.29.jar" src._05_Multiplicative_Row_Fetch.client.Client 1
+______________________________________________________
+
+Run query parser
+
+javac -cp "C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main;C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main\mysqlConnector\mysql-connector-java-8.0.29.jar" src/*.java
+
+java -cp "C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main;C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main\mysqlConnector\mysql-connector-java-8.0.29.jar" src/QueryParser "select count(*) from lineitem where L_ORDERKEY = 2;"
+
+______________________________________________________
+
+Prompt
+
+C:/Python311/python.exe c:/Users/shoum/Documents/VLDBPaperDemo/S2-VLDB-2023-main/prompt.py
+
+select count(*) from lineitem where L_ORDERKEY = 1;
+
+create enc table from lineitem
