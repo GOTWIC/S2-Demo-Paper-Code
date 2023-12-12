@@ -349,6 +349,7 @@ LINES TERMINATED BY '\\n'
             System.out.println(predicate);
             */
 
+            /*
             if (type == "*" || type == "count(*)"){
                 String[] arguments = new String[]{columnNames.get(0) + "," + columnValues.get(0)};
                 try {
@@ -366,6 +367,7 @@ LINES TERMINATED BY '\\n'
             if (type == "*"){
                 System.out.println("Running row fetch");
             }
+            */
         }
     }
 }

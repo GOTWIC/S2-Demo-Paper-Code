@@ -109,7 +109,6 @@ public class Client extends Thread {
             for (int i = startRow; i < endRow; i++) {
                 int randSeedClient = randClient.nextInt(Constants.getMaxRandomBound() - Constants.getMinRandomBound())
                         + Constants.getMinRandomBound();
-                System.out.println(randSeedClient + " " + resultCombiner[0][i]);
                 if (resultCombiner[0][i].intValue() == randSeedClient) { // of number of search columns is less than 3
                     result.add(i + 1);
                 }
@@ -296,7 +295,6 @@ public class Client extends Thread {
         Random rand = new Random(1);
         // storing the slope value for the line
         int coefficient = rand.nextInt(2);
-        System.out.println(coefficient);
         // stores shares of the secret
         String[] share = new String[serverCount];
         // for value of x starting from 1, evaluates the share for  'value'
@@ -323,10 +321,7 @@ public class Client extends Thread {
                     multiplicativeShares[i] = shamirSecretSharingString(columnValue[i], columnCount + 1);
 
                 for(int j = 0; j < multiplicativeShares[0].length; j++){
-                    System.out.println(multiplicativeShares[0][j]);
                 }
-
-                System.out.println("********");
         }
     }
 

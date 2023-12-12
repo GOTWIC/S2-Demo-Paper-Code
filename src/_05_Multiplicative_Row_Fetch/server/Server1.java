@@ -23,7 +23,7 @@ import java.math.BigInteger;
 public class Server1 {
 
     // query string to get server data from database
-    private static final String query_base = " from " + Helper.getTablePrefix() + "test_SERVERTABLE1 where rowID > ";
+    private static final String query_base = " from " + Helper.getDatabaseName() + "." + Helper.getTableName() + "_SERVERTABLE1 where rowID > ";
 
     // the number of row of tpch.lineitem considered
     private static int numRows;

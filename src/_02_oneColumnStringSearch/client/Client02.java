@@ -293,7 +293,7 @@ public class Client02 extends Thread {
      * @param args takes as string a column name and column value e.g. "suppkey,145"
      * @throws InterruptedException
      */
-    public static List<Integer> main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws InterruptedException {
         timestamps1.add(Instant.now());
 
         doPreWork(args);
@@ -302,7 +302,9 @@ public class Client02 extends Thread {
 
         List<Integer> returnResult = doPostWork();
 
-        return returnResult;
+        System.out.println("Result size: " + returnResult.size());
+
+        //return returnResult;
     }
 }
 

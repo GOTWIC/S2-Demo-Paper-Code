@@ -24,7 +24,8 @@ public class Server1 {
 
     // query string to get server data from database
     private static final String query_base1 = "select ";
-    private static final String query_base2 = " from " + Helper.getTablePrefix() + "TEST_SERVERTABLE1 where rowID > ";
+
+    private static final String query_base2 = " from " + Helper.getDatabaseName() + "." + "TEST_SERVERTABLE2 where rowID > ";
 
     // the number of row of tpch.lineitem considered
     private static int numRows;
@@ -95,6 +96,8 @@ public class Server1 {
                 String columns = Helper.strArrToStr(columnNameCopy);
 
                 System.out.println(columns);
+
+
 
                 String query = query_base1 + columns + query_base2 + startRow + " LIMIT " + numRowsPerThread;
                 Statement stmt = con.createStatement();

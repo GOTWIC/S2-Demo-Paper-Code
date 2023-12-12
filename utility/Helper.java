@@ -26,7 +26,9 @@ public class Helper {
     private static String databaseName = "tpch";
     private static int noOfColumns;
 
-    private static String modVal = "9794379537450709974983168981399384873473832303";
+    //private static String modVal = "9794379537450709974983168981399384873473832303";
+    private static String modVal = "100000007";
+
 
     public static Boolean getServer() {
         return true;
@@ -81,21 +83,10 @@ public class Helper {
         return properties;
     }
 
-    public static int mod(int number) {
-        BigInteger modulo = new BigInteger(modVal);
-        number = BigInteger.valueOf(number).mod(modulo).intValue();
-        if (number < 0)
-            number = BigInteger.valueOf(number).add(modulo).intValue();
-        return number;
-    }
 
-    public static long mod(long number) {
-        BigInteger modulo = new BigInteger(modVal);
-        number = BigInteger.valueOf(number).mod(modulo).longValueExact();
-        if (number < 0)
-            number = BigInteger.valueOf(number).add(modulo).longValueExact();
-        return number;
-    }
+
+    // **********************************************8
+    // Multiplicative Mod Functions
 
     public static BigInteger mod(BigInteger number) {
         BigInteger modulo = new BigInteger(modVal);
@@ -104,6 +95,46 @@ public class Helper {
             number = number.add(modulo);
         return number;
     }
+
+    // **********************************************8
+    // Additive Mod Functions
+
+    public static int mod(int number) {
+        number = number%100000007;
+        if (number < 0)
+            number += 100000007;
+        return number;
+    }
+
+    public static long mod(long number) {
+        number = number%100000007;
+        if (number < 0)
+            number += 100000007;
+        return number;
+    }
+
+    
+    /*
+    public static int mod(int number) {
+        BigInteger modulo = new BigInteger(modVal);
+        number = BigInteger.valueOf(number).mod(modulo).intValue();
+        if (number < 0)
+            number = BigInteger.valueOf(number).add(modulo).intValue();
+        return number;
+    }
+ 
+    public static long mod(long number) {
+        BigInteger modulo = new BigInteger(modVal);
+        number = BigInteger.valueOf(number).mod(modulo).longValueExact();
+        if (number < 0)
+            number = BigInteger.valueOf(number).add(modulo).longValueExact();
+        return number;
+    }
+    */
+
+
+
+
 
     public static int[] stringToIntArray(String data) {
         int[] result = new int[data.length()];

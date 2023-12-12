@@ -23,7 +23,7 @@ public class Server1 {
 
     // query string to get server data from database
     private static final String query_base1 = "select ";
-    private static final String query_base2 = " from " + Helper.getTablePrefix() + "test_SERVERTABLE1 where rowID > ";
+    private static final String query_base2 = " from " + Helper.getDatabaseName() + "." + Helper.getTableName() + "_SERVERTABLE1 where rowID > ";
 
     // the number of row of tpch.lineitem considered
     private static int numRows;
@@ -102,14 +102,9 @@ public class Server1 {
                     } else { // runs for server count<= 3
                         for (int j = 0; j < columnName.length; j++) {
                             product1 = Helper.mod(product1.multiply(Helper.mod(new BigInteger(rs.getString(columnName[j])).subtract(multiplicativeShare[j]))));
-                            System.out.println("product1: " + product1 + " server val" + new BigInteger(rs.getString(columnName[j])) + " client val" + multiplicativeShare[j]);
                         }
                     }
                     result[0][i] = Helper.mod(product1.add(BigInteger.valueOf(randSeedClient)));
-
-                    System.out.println("product1: " + product1 + " randSeedClient: " + randSeedClient);
-                    System.out.println("result[0][" + i + "]: " + result[0][i]);
-                    System.out.println("#############");    
 
                     if (columnCount > 3)
                         result[1][i] = Helper.mod(product2.add(BigInteger.valueOf(randSeedClient)));

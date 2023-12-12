@@ -24,7 +24,7 @@ public class Server4 {
 
     // query string to get server data from database
     private static final String query_base1 = "select ";
-    private static final String query_base2 = " from " + Helper.getTablePrefix() + "test_SERVERTABLE4 where rowID > ";
+    private static final String query_base2 = " from " + Helper.getDatabaseName() + "." + Helper.getTableName() + "_SERVERTABLE4 where rowID > ";
 
     // the number of row of tpch.lineitem considered
     private static int numRows;

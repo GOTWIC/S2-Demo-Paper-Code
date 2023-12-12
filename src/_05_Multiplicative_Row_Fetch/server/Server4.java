@@ -22,7 +22,7 @@ import java.math.BigInteger;
 
 public class Server4 {
     // query string to get server data from database
-    private static final String query_base = " from " + Helper.getTablePrefix() + "test_SERVERTABLE4 where rowID > ";
+    private static final String query_base = " from " + Helper.getDatabaseName() + "." + Helper.getTableName() + "_SERVERTABLE4 where rowID > ";
 
 
 

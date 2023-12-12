@@ -95,6 +95,7 @@ public class Client01 extends Thread {
             for (int i = startRow; i < endRow; i++) {
                 prg = randSeedClient.nextInt(Constants.getMaxRandomBound() -
                         Constants.getMinRandomBound()) + Constants.getMinRandomBound();
+                System.out.println("prg: " + prg);
                 if (resultCombiner[i] == prg) {
                     result.add(i + 1);
                 }
@@ -242,6 +243,8 @@ public class Client01 extends Thread {
                     + Constants.getMinRandomBound();
             additiveShare2 = valueSplit[j] - additiveShare1;
 
+            System.out.println("additiveShare1: " + additiveShare1 + " additiveShare2: " + additiveShare2);
+
             // fingerprint generation
             multiplier = (int) Helper.mod((long) Math.pow(fingerprintPrimeNumber, j + 1));
 
@@ -249,6 +252,8 @@ public class Client01 extends Thread {
                     Helper.mod((long) multiplier * (long) additiveShare1));
             fingerprint2 = (int) Helper.mod(fingerprint2 +
                     Helper.mod((long) multiplier * (long) additiveShare2));
+
+            System.out.println("additiveShare1: " + additiveShare1 + " additiveShare2: " + additiveShare2 + " multiplier: " + multiplier + " fingerprint1: " + fingerprint1 + " fingerprint2: " + fingerprint2);
         }
     }
 
@@ -292,7 +297,7 @@ public class Client01 extends Thread {
      * @param args takes as string a column name and column value e.g. "suppkey,145"
      * @throws InterruptedException
      */
-    public static List<Integer> main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws InterruptedException {
         timestamps1.add(Instant.now());
 
         doPreWork(args);
@@ -301,7 +306,9 @@ public class Client01 extends Thread {
 
         List<Integer> returnResult = doPostWork();
 
-        return returnResult;
+        System.out.println(returnResult.size() + " rows found.");
+
+        //return returnResult;
     }
 }
 

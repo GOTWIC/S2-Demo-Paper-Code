@@ -99,6 +99,8 @@ public class Server2 {
                         temp = Helper.mod(temp + Helper.mod(hashMap.get(j + 1) * Integer.parseInt(rowSplit[j])));
                     }
                     result[i] = (int) Helper.mod((temp - fingerprint2) * prgServer);
+
+                    System.out.println("Row Val: " + row + " prgServer: " + prgServer + " fingerprint1: " + fingerprint2 + " result: " + result[i] + " temp: " + temp);
                 }
             } catch (SQLException ex) {
                 log.log(Level.SEVERE, ex.getMessage());
@@ -163,6 +165,8 @@ public class Server2 {
                 // sending the processed data to Combiner
                 combinerSocket = new Socket(combinerIP, combinerPort);
                 outToCombiner = new ObjectOutputStream(combinerSocket.getOutputStream());
+                // Print result
+                System.out.println("Server2 Result: " + Arrays.toString(result));
                 outToCombiner.writeObject(result);
                 combinerSocket.close();
 
