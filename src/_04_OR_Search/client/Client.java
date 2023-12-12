@@ -12,7 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.math.BigInteger;
 
-public class Client04 extends Thread {
+public class Client extends Thread {
 
     // stores IP value of desired server/client
     public String IP;
@@ -81,11 +81,11 @@ public class Client04 extends Thread {
 
 
     // default constructor
-    private Client04() {
+    private Client() {
     }
 
     // parametrised constructor
-    public Client04(String IP, int port, String[] data) {
+    public Client(String IP, int port, String[] data) {
         this.IP = IP;
         this.port = port;
         this.data = data;
@@ -234,7 +234,7 @@ public class Client04 extends Thread {
     // prepares data to send to server and starts listening to target servers
     private static void doPostWork() {
         int numServers;
-        Client04 server1, server2, server3 = null, server4 = null, combiner;
+        Client server1, server2, server3 = null, server4 = null, combiner;
 
         // based on number of columns the number of server are chosen
         if (columnCount > 3) {
@@ -247,22 +247,22 @@ public class Client04 extends Thread {
         String[] data;
 
         data = new String[]{String.valueOf(numServers)};
-        combiner = new Client04(combinerIP, combinerPort, data);
+        combiner = new Client(combinerIP, combinerPort, data);
 
         data = new String[]{Helper.strArrToStr(columnName), Helper.strArrToStr(helper(0)), String.valueOf(seedClient)};
-        server1 = new Client04(server1IP, server1Port, data);
+        server1 = new Client(server1IP, server1Port, data);
 
         data = new String[]{Helper.strArrToStr(columnName), Helper.strArrToStr(helper(1)), String.valueOf(seedClient)};
-        server2 = new Client04(server2IP, server2Port, data);
+        server2 = new Client(server2IP, server2Port, data);
 
         if (numServers > 2) {
             data = new String[]{Helper.strArrToStr(columnName), Helper.strArrToStr(helper(2)), String.valueOf(seedClient)};
-            server3 = new Client04(server3IP, server3Port, data);
+            server3 = new Client(server3IP, server3Port, data);
         }
 
         if (numServers > 3) {
             data = new String[]{Helper.strArrToStr(columnName), Helper.strArrToStr(helper(3)), String.valueOf(seedClient)};
-            server4 = new Client04(server4IP, server4Port, data);
+            server4 = new Client(server4IP, server4Port, data);
         }
 
         // sending data to each server
@@ -280,7 +280,7 @@ public class Client04 extends Thread {
 
         // started to listen for incoming responses from servers
         timestamps1.add(Instant.now());
-        Client04 client = new Client04();
+        Client client = new Client();
         client.startAsReceiver();
     }
 
