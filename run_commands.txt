@@ -13,7 +13,12 @@ javac -cp "C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main;C:\Users\sho
 
 
 
+______________________________________________________
 
+Query Parser
+javac -cp "C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main;C:\Users\shoum\Downloads\S2-VLDB-2023-original\S2-VLDB-2023-main\mysqlConnector\mysql-connector-java-8.0.29.jar" src\QueryParser.java
+
+java -cp "C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main;C:\Users\shoum\Downloads\S2-VLDB-2023-original\S2-VLDB-2023-main\mysqlConnector\mysql-connector-java-8.0.29.jar" src.QueryParser
 
 ______________________________________________________
 

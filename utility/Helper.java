@@ -22,8 +22,8 @@ public class Helper {
     private static final Logger log = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     private static LinkedHashMap<String, String> columnList = new LinkedHashMap<>();
-    private static String tableName = "lineitem";
-    private static String databaseName = "tpch";
+    //private static String tableName = "lineitem";
+    //private static String databaseName = "tpch";
     private static int noOfColumns;
 
     private static String modVal = "9794379537450709974983168981399384873473832303";
@@ -448,7 +448,7 @@ public class Helper {
 
         try {
                 stmt = con.createStatement();
-                rs = stmt.executeQuery("show COLUMNS from " + databaseName + "." + tableName);
+                rs = stmt.executeQuery("show COLUMNS from " + getDatabaseName() + "." + getTableName());
 
                 while(rs.next()){
                         String col_type = rs.getString("Type");
@@ -458,16 +458,49 @@ public class Helper {
                 noOfColumns = columnList.size();
         } catch (Exception e) {
                 e.printStackTrace();
+                System.out.println("Error in getting metadata");
         }
     }
 
     public static String getTableName(){
+        // read table name from userinfor.properties file
+        Properties properties = readPropertiesFile("config/userinfo.properties");
+        String tableName = properties.getProperty("tableName");
         return tableName;
     }
 
-    public static String getDatabaseName(){
-        return databaseName;
+    /*
+    public static void setTableName(String newName){
+        // write newName into properties file
+        Properties properties = readPropertiesFile("config/userinfo.properties");
+        properties.setProperty("tableName", newName);
+        try {
+            properties.store(new FileOutputStream("config/userinfo.properties"), null);
+        } catch (IOException ioException) {
+            log.log(Level.SEVERE, ioException.getMessage());
+        }
     }
+    */
+
+    public static String getDatabaseName(){
+        // read table name from userinfor.properties file
+        Properties properties = readPropertiesFile("config/userinfo.properties");
+        String dbName = properties.getProperty("dbName");
+        return dbName;
+    }
+
+    /*
+    public static void setDatabaseName(String newName){
+        // write newName into properties file
+        Properties properties = readPropertiesFile("config/userinfo.properties");
+        properties.setProperty("dbName", newName);
+        try {
+            properties.store(new FileOutputStream("config/userinfo.properties"), null);
+        } catch (IOException ioException) {
+            log.log(Level.SEVERE, ioException.getMessage());
+        }
+    }
+    */
 
     public static int getNoOfColumns(){
         return noOfColumns;

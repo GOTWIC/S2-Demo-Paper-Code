@@ -48,33 +48,36 @@ public class QueryParser {
     }
 
     private static void createTable(String query) throws QueryParseExceptions, IOException{
+
         query = query.substring("create".length()).stripLeading();
 
-        if (!query.startsWith("enc table "))
-            throw new QueryParseExceptions("Invalid query syntax: Missing keyword 'enc table'.");
+        if (!query.startsWith("table "))
+            throw new QueryParseExceptions("Invalid query syntax: Missing keyword 'table'.");
 
-        query = query.substring("enc table".length()).stripLeading();
+        query = query.substring("table".length()).stripLeading();
 
         if (!query.startsWith("from"))
             throw new QueryParseExceptions("Invalid query syntax: Missing keyword 'from'.");
 
         query = query.substring("from".length()).stripLeading();
 
-        if (!query.startsWith(tableName) && !query.startsWith(databaseName + "." + tableName))
-            throw new QueryParseExceptions("Invalid query syntax: Incorrect table name.");
+        //if (!query.startsWith(tableName) && !query.startsWith(databaseName + "." + tableName))
+        //    throw new QueryParseExceptions("Invalid query syntax: Incorrect table name.");
 
-        // For now, this will not work since string columns are not in numerical format   
+        // by this point the query is just database_name.table_name and number of rows
+
+        String[] queryParts = query.split(" ");
+
         for (Map.Entry<String, String> entry : columnList.entrySet()) {
             String colName = entry.getKey();
-            String colType = entry.getValue();
-            //if(colType.contains("char") || colType.contains("int"))
             columns_to_split += colName + ",";
         }
 
-        // Numerical Only Override
-        // columns_to_split = "L_ORDERKEY,L_PARTKEY,L_LINENUMBER";
+        String db = queryParts[0].substring(0, query.indexOf("."));
+        String table = queryParts[0].substring(query.indexOf(".") + 1);
+        String rows = queryParts[1];   
 
-        String[] arguments = new String[]{"100", "tpch", "lineitem",columns_to_split};
+        String[] arguments = new String[]{rows, db, table, columns_to_split};
         Database_Table_Creator.main(arguments);
 
         // Create server tables 
@@ -82,9 +85,9 @@ public class QueryParser {
             String createTableQuery = 
             """
                 CREATE TABLE  """ +
-                    " " + databaseName + "." +
+                    " " + db + "." + table +
                 """
-                    test_servertable """ + String.valueOf(i+1) + """
+                    _servertable """ + String.valueOf(i+1) + """
                 (
             """;
 
@@ -96,16 +99,16 @@ LOAD DATA LOCAL INFILE
             """
 INTO TABLE
             """
- + databaseName + "." +
+ + db + "." + table +
             """ 
-test_servertable """ + String.valueOf(i+1) + " " + 
+_servertable """ + String.valueOf(i+1) + " " + 
             """    
 FIELDS TERMINATED BY ',' 
 ENCLOSED BY '"'
 LINES TERMINATED BY '\\n'
             """;
             //IGNORE 1 ROWS;
-            
+
             // Append additive columns for table definition
             for (Map.Entry<String, String> entry : columnList.entrySet()) {
                 String colName = entry.getKey();
@@ -151,23 +154,24 @@ LINES TERMINATED BY '\\n'
             }
             Statement stmt;
 
+            //System.out.println(createTableQuery);
+
             try {
                     stmt = con.createStatement();  
                     stmt.executeUpdate("SET GLOBAL local_infile=1;");
-                    //stmt.executeUpdate("drop table tpch.test_servertable1, tpch.test_servertable2, tpch.test_servertable3, tpch.test_servertable4");
                     stmt.executeUpdate(createTableQuery);
                     stmt.executeUpdate(loadTableQuery);
             } catch (Exception e) {
                     e.printStackTrace();
-            }                            
+            }     
         }
     }
 
     private static String basicChecks(String query) throws QueryParseExceptions {
         if (!query.startsWith("select "))
             throw new QueryParseExceptions("Invalid query syntax: Missing keyword 'select'.");
-        if (!query.endsWith(";"))
-            throw new QueryParseExceptions("Invalid query syntax: Missing ';'.");
+        //if (!query.endsWith(";"))
+        //    throw new QueryParseExceptions("Invalid query syntax: Missing ';'.");
         return query.substring("select".length()).stripLeading();
     }
 
@@ -309,32 +313,69 @@ LINES TERMINATED BY '\\n'
         return endIndex;
     }
 
+
+    public static void runNormalQuery(String query) throws IOException{
+        executeQuery(origQuery);
+    }
+
+    public static void executeQuery(String query){
+        Connection con = null;
+        try {
+                con = Helper.getConnection();
+        } catch (SQLException e) {
+                e.printStackTrace();
+        }
+        Statement stmt;
+
+        try {
+                stmt = con.createStatement();  
+                stmt.executeUpdate("SET GLOBAL local_infile=1;");
+                stmt.executeUpdate(query);
+                writeResult("Success");
+        } catch (Exception e) {
+                e.printStackTrace();
+        } 
+    }
+
+    public static void writeResult(String res) throws IOException {
+        FileWriter writer = new FileWriter("result/prompt.txt");
+        writer.append(res);
+        writer.flush();
+        writer.close();
+    }
+
     
     
     public static void main(String[] args) throws QueryParseExceptions, IOException {
 
+        columnList = Helper.getColumnList();
+
         Helper.getMetadata();
         tableName = Helper.getTableName();
         databaseName = Helper.getDatabaseName();
-        noOfColumns = Helper.getNoOfColumns();
-        columnList = Helper.getColumnList();    
+        noOfColumns = Helper.getNoOfColumns(); 
+
 
         String query = args[0];
         origQuery = query;
         query = query.strip().toLowerCase();
 
-        int queryType = getQueryType(query);   
+        if(!query.contains("enc")){
+            runNormalQuery(query);
+            return;
+        }
 
+        query = query.replace("enc ", "");
+
+        int queryType = getQueryType(query); 
+        
         if(queryType == 0){
             createTable(query);
-
-            FileWriter writer = new FileWriter("result/prompt.txt");
-            writer.append("Table created successfully");
-            writer.flush();
-            writer.close();
+            writeResult("Table created successfully");
         }
 
         else if (queryType == 1){
+            // This is pretty useless, but I'm keeping it here for now
             query = basicChecks(query);
             query = extractprotocolType(query);
             query = validateTableName(query);
@@ -349,22 +390,28 @@ LINES TERMINATED BY '\\n'
             System.out.println(predicate);
             */
 
+            String enc_query_result = "";
+
             if (type == "*" || type == "count(*)"){
                 String[] arguments = new String[]{columnNames.get(0) + "," + columnValues.get(0)};
                 try {
-                    List<Integer> res = Client02.main(arguments);
-                    //System.out.println(res.size());
-                    FileWriter writer = new FileWriter("result/prompt.txt");
-                    writer.append(String.valueOf(res.size()));
-                    writer.flush();
-                    writer.close();
+                    List<Integer> res = Client01.main(arguments);
+                    if(type == "count(*)"){
+                        writeResult(String.valueOf(res.size()));
+                    }
+                    else{
+                        for(int i = 0; i < res.size(); i++){
+                            enc_query_result += res.get(i) + ",";
+                        }
+                    }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
 
             if (type == "*"){
-                System.out.println("Running row fetch");
+                String[] arguments = new String[]{enc_query_result};
+
             }
         }
     }

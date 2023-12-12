@@ -1,0 +1,5 @@
+create database mygarage
+create table mygarage.lamborghini (year int, model varchar(255), color varchar(255))
+insert into mygarage.lamborghini values (2022, "aventador", "white"), (2019, "huracan", "green"), (2022, "urus", "yellow"), (2017, "terzo", "black")
+[optional] enc use mygarage.lamborghini
+enc create table from mygarage.lamborghini 4
