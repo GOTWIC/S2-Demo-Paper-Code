@@ -13,7 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
-public class Client extends Thread {
+public class Client05 extends Thread {
 
     // stores IP value of desired server/client
     public String IP;
@@ -81,11 +81,11 @@ public class Client extends Thread {
 
 
     // default constructor
-    private Client() {
+    private Client05() {
     }
 
     // parametrised constructor
-    public Client(String IP, int port, String[] data) {
+    public Client05(String IP, int port, String[] data) {
         this.IP = IP;
         this.port = port;
         this.data = data;
@@ -186,21 +186,21 @@ public class Client extends Thread {
 
     // prepares data to send to server and starts listening to target servers
     private static void doPostWork() {
-        Client server1, server2, server3, server4;
+        Client05 server1, server2, server3, server4;
 
         // server data preparation
         String[] data;
         data = new String[]{Helper.arrToStr(server1RowShare), Helper.arrToStr(server1ColShare), String.valueOf(seedClient)};
-        server1 = new Client(server1IP, server1Port, data);
+        server1 = new Client05(server1IP, server1Port, data);
 
         data = new String[]{Helper.arrToStr(server2RowShare), Helper.arrToStr(server2ColShare), String.valueOf(seedClient)};
-        server2 = new Client(server2IP, server2Port, data);
+        server2 = new Client05(server2IP, server2Port, data);
 
         data = new String[]{Helper.arrToStr(server3RowShare), Helper.arrToStr(server3ColShare), String.valueOf(seedClient)};
-        server3 = new Client(server3IP, server3Port, data);
+        server3 = new Client05(server3IP, server3Port, data);
 
         data = new String[]{Helper.arrToStr(server4RowShare), Helper.arrToStr(server4ColShare), String.valueOf(seedClient)};
-        server4 = new Client(server4IP, server4Port, data);
+        server4 = new Client05(server4IP, server4Port, data);
 
 
         // sending data to each server
@@ -211,7 +211,7 @@ public class Client extends Thread {
 
         // started to listen for incoming responses from servers
         timestamps1.add(Instant.now());
-        Client client = new Client();
+        Client05 client = new Client05();
         client.startAsReceiver();
     }
 

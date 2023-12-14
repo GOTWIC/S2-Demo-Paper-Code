@@ -50,10 +50,10 @@ public class QueryParser {
     private static void createTable(String query) throws QueryParseExceptions, IOException{
         query = query.substring("create".length()).stripLeading();
 
-        if (!query.startsWith("enc table "))
-            throw new QueryParseExceptions("Invalid query syntax: Missing keyword 'enc table'.");
+        if (!query.startsWith("table "))
+            throw new QueryParseExceptions("Invalid query syntax: Missing keyword 'table'.");
 
-        query = query.substring("enc table".length()).stripLeading();
+        query = query.substring("table".length()).stripLeading();
 
         if (!query.startsWith("from"))
             throw new QueryParseExceptions("Invalid query syntax: Missing keyword 'from'.");
@@ -74,7 +74,7 @@ public class QueryParser {
         // Numerical Only Override
         // columns_to_split = "L_ORDERKEY,L_PARTKEY,L_LINENUMBER";
 
-        String[] arguments = new String[]{"4", "tpch", "lineitem",columns_to_split};
+        String[] arguments = new String[]{"4", databaseName, tableName,columns_to_split};
         Database_Table_Creator.main(arguments);
 
         // Create server tables 
@@ -82,9 +82,9 @@ public class QueryParser {
             String createTableQuery = 
             """
                 CREATE TABLE  """ +
-                    " " + databaseName + "." +
+                    " " + databaseName + "." + tableName +
                 """
-                    test_servertable """ + String.valueOf(i+1) + """
+                    _SERVERTABLE """ + String.valueOf(i+1) + """
                 (
             """;
 
@@ -96,9 +96,9 @@ LOAD DATA LOCAL INFILE
             """
 INTO TABLE
             """
- + databaseName + "." +
+ + databaseName + "." + tableName + 
             """ 
-test_servertable """ + String.valueOf(i+1) + " " + 
+_SERVERTABLE """ + String.valueOf(i+1) + " " + 
             """    
 FIELDS TERMINATED BY ',' 
 ENCLOSED BY '"'
@@ -309,6 +309,37 @@ LINES TERMINATED BY '\\n'
         return endIndex;
     }
 
+    private static void execute_query(String query){
+        Connection con = null;
+        Statement stmt;
+        try {
+                con = Helper.getConnection();
+        } catch (SQLException e) {
+                e.printStackTrace();
+        }
+        try {
+                stmt = con.createStatement();  
+                stmt.executeUpdate("SET GLOBAL local_infile=1;");
+                stmt.executeUpdate(query);
+        } catch (Exception e) {
+                e.printStackTrace();
+        }     
+
+        writeResult("Success!");
+
+    }
+
+    private static void writeResult(String result){
+        try {
+            FileWriter writer = new FileWriter("result/prompt.txt");
+            writer.append(result);
+            writer.flush();
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     
     
     public static void main(String[] args) throws QueryParseExceptions, IOException {
@@ -323,15 +354,18 @@ LINES TERMINATED BY '\\n'
         origQuery = query;
         query = query.strip().toLowerCase();
 
+        if(!query.contains("enc")){
+            execute_query(query);
+            return;
+        }
+
+        query = query.replace("enc ", "");
+
         int queryType = getQueryType(query);   
 
         if(queryType == 0){
             createTable(query);
-
-            FileWriter writer = new FileWriter("result/prompt.txt");
-            writer.append("Table created successfully");
-            writer.flush();
-            writer.close();
+            writeResult("Table Created Sucessfully!");
         }
 
         else if (queryType == 1){

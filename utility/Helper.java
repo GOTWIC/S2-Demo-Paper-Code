@@ -22,8 +22,6 @@ public class Helper {
     private static final Logger log = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     private static LinkedHashMap<String, String> columnList = new LinkedHashMap<>();
-    private static String tableName = "lineitem";
-    private static String databaseName = "tpch";
     private static int noOfColumns;
 
     private static String mulMod = "9794379537450709974983168981399384873473832303";
@@ -84,7 +82,6 @@ public class Helper {
     }
 
 
-
     // **********************************************8
     // Multiplicative Mod Functions
 
@@ -112,28 +109,6 @@ public class Helper {
             number += addMod;
         return number;
     }
-
-    
-    /*
-    public static int mod(int number) {
-        BigInteger modulo = new BigInteger(modVal);
-        number = BigInteger.valueOf(number).mod(modulo).intValue();
-        if (number < 0)
-            number = BigInteger.valueOf(number).add(modulo).intValue();
-        return number;
-    }
- 
-    public static long mod(long number) {
-        BigInteger modulo = new BigInteger(modVal);
-        number = BigInteger.valueOf(number).mod(modulo).longValueExact();
-        if (number < 0)
-            number = BigInteger.valueOf(number).add(modulo).longValueExact();
-        return number;
-    }
-    */
-
-
-
 
 
     public static int[] stringToIntArray(String data) {
@@ -479,7 +454,7 @@ public class Helper {
 
         try {
                 stmt = con.createStatement();
-                rs = stmt.executeQuery("show COLUMNS from " + databaseName + "." + tableName);
+                rs = stmt.executeQuery("show COLUMNS from " + getDatabaseName() + "." + getTableName());
 
                 while(rs.next()){
                         String col_type = rs.getString("Type");
@@ -493,11 +468,13 @@ public class Helper {
     }
 
     public static String getTableName(){
-        return tableName;
+        Properties properties = readPropertiesFile(mainDir + "config/userinfo.properties");
+        return properties.getProperty("tableName");
     }
 
     public static String getDatabaseName(){
-        return databaseName;
+        Properties properties = readPropertiesFile(mainDir + "config/userinfo.properties");
+        return properties.getProperty("dbName");
     }
 
     public static int getNoOfColumns(){
