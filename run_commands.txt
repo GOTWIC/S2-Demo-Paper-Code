@@ -13,9 +13,26 @@ javac -cp "C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main;C:\Users\sho
 
 
 
+
+
 ______________________________________________________
 
-01 - Number Search
+01 - String Search
+
+javac -cp "C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main;C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main\mysqlConnector\mysql-connector-java-8.0.29.jar" src/_01_oneColumnStringSearch/client/*.java src/_01_oneColumnStringSearch/combiner/*.java src/_01_oneColumnStringSearch/server/*.java 
+
+java -cp "C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main;C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main\mysqlConnector\mysql-connector-java-8.0.29.jar" src._01_oneColumnStringSearch.server.Server1
+
+java -cp "C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main;C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main\mysqlConnector\mysql-connector-java-8.0.29.jar" src._01_oneColumnStringSearch.server.Server2
+
+java -cp "C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main;C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main\mysqlConnector\mysql-connector-java-8.0.29.jar" src._01_oneColumnStringSearch.combiner.Combiner
+
+java -cp "C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main;C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main\mysqlConnector\mysql-connector-java-8.0.29.jar" src._01_oneColumnStringSearch.client.Client
+
+
+______________________________________________________
+
+02 - Number Search
 
 javac -cp "C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main;C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main\mysqlConnector\mysql-connector-java-8.0.29.jar" src/_01_oneColumnNumberSearch/client/*.java src/_01_oneColumnNumberSearch/combiner/*.java src/_01_oneColumnNumberSearch/server/*.java 
 
@@ -25,21 +42,7 @@ java -cp "C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main;C:\Users\shou
 
 java -cp "C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main;C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main\mysqlConnector\mysql-connector-java-8.0.29.jar" src._01_oneColumnNumberSearch.combiner.Combiner
 
-java -cp "C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main;C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main\mysqlConnector\mysql-connector-java-8.0.29.jar" src._01_oneColumnNumberSearch.client.Client01
-
-______________________________________________________
-
-02 - String Search
-
-javac -cp "C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main;C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main\mysqlConnector\mysql-connector-java-8.0.29.jar" src/_02_oneColumnStringSearch/client/*.java src/_02_oneColumnStringSearch/combiner/*.java src/_02_oneColumnStringSearch/server/*.java 
-
-java -cp "C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main;C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main\mysqlConnector\mysql-connector-java-8.0.29.jar" src._02_oneColumnStringSearch.server.Server1
-
-java -cp "C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main;C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main\mysqlConnector\mysql-connector-java-8.0.29.jar" src._02_oneColumnStringSearch.server.Server2
-
-java -cp "C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main;C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main\mysqlConnector\mysql-connector-java-8.0.29.jar" src._02_oneColumnStringSearch.combiner.Combiner
-
-java -cp "C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main;C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main\mysqlConnector\mysql-connector-java-8.0.29.jar" src._02_oneColumnStringSearch.client.Client02
+java -cp "C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main;C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main\mysqlConnector\mysql-connector-java-8.0.29.jar" src._01_oneColumnNumberSearch.client.Client
 
 
 ______________________________________________________

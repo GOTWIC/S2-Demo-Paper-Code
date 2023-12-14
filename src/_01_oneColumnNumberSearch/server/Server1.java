@@ -33,7 +33,7 @@ public class Server1 {
     // the fingerprintPrimeNumber value i.e value of r which is taken as 43 in our case
     private static int fingerprintPrimeNumber;
     // the fingerprint value generated for server1
-    private static int fingerprint1;
+    private static int addShare1;
     // stores seed value for server for random number generation
     private static int seedServer;
     // stores seed value for client for random number generation
@@ -92,26 +92,16 @@ public class Server1 {
                 // performing server operation on each row of the database
                 for (int i = startRow; i < endRow; i++) {
                     rs.next();
-                    row = rs.getString(columnName);
-                    rowSplit = row.split("\\|");
-
-                    long temp = 0;
                     prgServer = randSeedServer.nextInt(Constants.getMaxRandomBound() -
                             Constants.getMinRandomBound()) + Constants.getMinRandomBound();
                     prgClient = randSeedClient.nextInt(Constants.getMaxRandomBound() -
                             Constants.getMinRandomBound()) + Constants.getMinRandomBound();
 
-                    for (int j = rowSplit.length - 1; j >= 0; j--) {
-                        if (!hashMap.containsKey(j + 1)) {
-                            hashMap.put(j + 1, Helper.mod((long) Math.pow(fingerprintPrimeNumber, j + 1)));
-                        }
-                        temp = Helper.mod(temp + Helper.mod(hashMap.get(j + 1)
-                                * Integer.parseInt(rowSplit[j])));
-                    }
-                    result[i] = (int) Helper.mod(Helper.mod((temp - fingerprint1) * prgServer) + prgClient);
+                    result[i] = (int) Helper.mod(Helper.mod((rs.getLong(columnName) - addShare1) *
+                            prgServer) + prgClient);
 
-                    System.out.println("Row Val: " + row + " prgServer: " + prgServer + " prgClient: " + prgClient
-                            + " fingerprint1: " + fingerprint1 + " result: " + result[i] + " temp: " + temp);
+                    System.out.println("Row Val: " + rs.getLong(columnName) + " prgServer: " + prgServer + " prgClient: " + prgClient
+                            + " addShare1: " + addShare1 + " result: " + result[i]);
                 }
             } catch (SQLException ex) {
                 log.log(Level.SEVERE, ex.getMessage());
@@ -123,7 +113,7 @@ public class Server1 {
     private static void doWork(String[] data) {
 
         columnName = "A_" + data[0];
-        fingerprint1 = Integer.parseInt(data[1]);
+        addShare1 = Integer.parseInt(data[1]);
         seedClient = Integer.parseInt(data[2]);
         result = new int[numRows];
 

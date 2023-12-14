@@ -33,7 +33,7 @@ public class Server2 {
     // the fingerprintPrimeNumber value i.e value of r which is taken as 43 in our case
     private static int fingerprintPrimeNumber;
     // the fingerprint value generated for server2
-    private static int fingerprint2;
+    private static int addShare2;
     // stores seed value for server for random number generation
     private static int seedServer;
     // the name of the tpch.lineitem column to search over
@@ -85,23 +85,13 @@ public class Server2 {
                 // performing server operation on each row of the database
                 for (int i = startRow; i < endRow; i++) {
                     rs.next();
-                    row = rs.getString(columnName);
-                    rowSplit = row.split("\\|");
-
-                    long temp = 0;
                     prgServer = randSeedServer.nextInt(Constants.getMaxRandomBound() -
                             Constants.getMinRandomBound()) + Constants.getMinRandomBound();
 
-                    for (int j = rowSplit.length - 1; j >= 0; j--) {
-                        if (!hashMap.containsKey(j + 1)) {
-                            hashMap.put(j + 1, Helper.mod((long) Math.pow(fingerprintPrimeNumber, j + 1)));
-                        }
-                        temp = Helper.mod(temp + Helper.mod(hashMap.get(j + 1) * Integer.parseInt(rowSplit[j])));
-                    }
-                    result[i] = (int) Helper.mod((temp - fingerprint2) * prgServer);
+                    result[i] = (int) Helper.mod(Helper.mod((rs.getLong(columnName) - addShare2) *
+                            prgServer));
 
-                    System.out.println("Row Val: " + row + " prgServer: " + prgServer + " fingerprint1: " + fingerprint2 + " result: " + result[i] + " temp: " + temp);
-                }
+                    System.out.println("Row Val: " + rs.getLong(columnName) + " prgServer: " + prgServer + " addShare2: " + addShare2 + " result: " + result[i]);                }
             } catch (SQLException ex) {
                 log.log(Level.SEVERE, ex.getMessage());
             }
@@ -112,7 +102,7 @@ public class Server2 {
     private static void doWork(String[] data) {
 
         columnName = "A_" + data[0];
-        fingerprint2 = Integer.parseInt(data[1]);
+        addShare2 = Integer.parseInt(data[1]);
         result = new int[numRows];
 
         // the list containing all the threads

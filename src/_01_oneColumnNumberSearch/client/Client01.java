@@ -35,12 +35,6 @@ public class Client01 extends Thread {
     private static String columnName;
     // the value of the tpch.lineitem column to search over
     private static int columnValue;
-    // the fingerprintPrimeNumber value i.e value of r which is taken as 43 in our case
-    private static int fingerprintPrimeNumber;
-    // the fingerprint value generated for server1
-    private static int fingerprint1;
-    // the fingerprint value generated for server2
-    private static int fingerprint2;
     // stores seed value for client for random number generation
     private static int seedClient;
 
@@ -50,6 +44,8 @@ public class Client01 extends Thread {
     private static int numThreads;
     // the number of row per thread
     private static int numRowsPerThread;
+
+    private static int additiveShare1, additiveShare2;
 
     // stores the result received/sent from/to combiner
     private static int[] resultCombiner;
@@ -210,10 +206,10 @@ public class Client01 extends Thread {
 
         // server data preparation
         String[] data;
-        data = new String[]{columnName, String.valueOf(fingerprint1), String.valueOf(seedClient)};
+        data = new String[]{columnName, String.valueOf(additiveShare1), String.valueOf(seedClient)};
         Client01 server1 = new Client01(server1IP, server1Port, data);
 
-        data = new String[]{columnName, String.valueOf(fingerprint2)};
+        data = new String[]{columnName, String.valueOf(additiveShare2)};
         Client01 server2 = new Client01(server2IP, server2Port, data);
 
         // sending data to each server
@@ -231,30 +227,10 @@ public class Client01 extends Thread {
     private static void doWork() {
         Random random = new Random();
 
-        int additiveShare1, additiveShare2, multiplier;
-
-        // extracts each digit/letter of string value
-        int[] valueSplit = Helper.stringToIntArray(String.valueOf(columnValue));
-
-        // loops over each digit/letter to generate fingerprint value for server
-        for (int j = valueSplit.length - 1; j >= 0; j--) {
-            // additive share for digit/letter
-            additiveShare1 = random.nextInt(Constants.getMaxRandomBound() - Constants.getMinRandomBound())
-                    + Constants.getMinRandomBound();
-            additiveShare2 = valueSplit[j] - additiveShare1;
-
-            System.out.println("additiveShare1: " + additiveShare1 + " additiveShare2: " + additiveShare2);
-
-            // fingerprint generation
-            multiplier = (int) Helper.mod((long) Math.pow(fingerprintPrimeNumber, j + 1));
-
-            fingerprint1 = (int) Helper.mod(fingerprint1 +
-                    Helper.mod((long) multiplier * (long) additiveShare1));
-            fingerprint2 = (int) Helper.mod(fingerprint2 +
-                    Helper.mod((long) multiplier * (long) additiveShare2));
-
-            System.out.println("additiveShare1: " + additiveShare1 + " additiveShare2: " + additiveShare2 + " multiplier: " + multiplier + " fingerprint1: " + fingerprint1 + " fingerprint2: " + fingerprint2);
-        }
+        // additive share for the search key
+        additiveShare1 = random.nextInt(Constants.getMaxRandomBound() - Constants.getMinRandomBound())
+                + Constants.getMinRandomBound();
+        additiveShare2 = columnValue - additiveShare1;
     }
 
     /**
@@ -276,7 +252,6 @@ public class Client01 extends Thread {
         Properties properties = Helper.readPropertiesFile(pathName);
 
         seedClient = Integer.parseInt(properties.getProperty("seedClient"));
-        fingerprintPrimeNumber = Integer.parseInt(properties.getProperty("fingerprintPrimeNumber"));
 
         numRows = Integer.parseInt(properties.getProperty("numRows"));
         numThreads = Integer.parseInt(properties.getProperty("numThreads"));

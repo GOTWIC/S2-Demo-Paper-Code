@@ -74,7 +74,7 @@ public class QueryParser {
         // Numerical Only Override
         // columns_to_split = "L_ORDERKEY,L_PARTKEY,L_LINENUMBER";
 
-        String[] arguments = new String[]{"100", "tpch", "lineitem",columns_to_split};
+        String[] arguments = new String[]{"4", "tpch", "lineitem",columns_to_split};
         Database_Table_Creator.main(arguments);
 
         // Create server tables 
