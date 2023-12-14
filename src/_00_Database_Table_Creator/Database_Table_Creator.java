@@ -274,7 +274,7 @@ public class Database_Table_Creator {
                             String part4_a = part2_a;
 
                             // Multiplicative Shares
-                            int colVals[] = func(Integer.parseInt(origVALS.get(j)));
+                            BigInteger colVals[] = func(Integer.parseInt(origVALS.get(j)));
                             String part1_m = String.valueOf(colVals[0]);
                             String part2_m = String.valueOf(colVals[1]);
                             String part3_m = String.valueOf(colVals[2]);
@@ -395,7 +395,8 @@ public class Database_Table_Creator {
      *          created
      * @return array of four secret shares for the secret value
      */
-    private static int[] func(int b) {
+    private static BigInteger[] func(int c) {
+        BigInteger b = BigInteger.valueOf(c);
         Random rand = new Random(69);
 
         // stores random values generated for slope of the line
@@ -403,13 +404,13 @@ public class Database_Table_Creator {
 
         // as four shares are created for each value the value of x is 1,2,3,4 and
         // secret value b is the intercept
-        int m1 = 1 * m + b;
-        int m2 = 2 * m + b;
-        int m3 = 3 * m + b;
-        int m4 = 4 * m + b;
+        BigInteger m1 = BigInteger.valueOf(1 * m).add(b);
+        BigInteger m2 = BigInteger.valueOf(2 * m).add(b);
+        BigInteger m3 = BigInteger.valueOf(3 * m).add(b);
+        BigInteger m4 = BigInteger.valueOf(4 * m).add(b);
 
         // stores secret shares of the value b after performing modulus operation
-        int vals[] = new int[] { Helper.mod(m1), Helper.mod(m2), Helper.mod(m3), Helper.mod(m4) };
+        BigInteger vals[] = new BigInteger[] { Helper.mod(m1), Helper.mod(m2), Helper.mod(m3), Helper.mod(m4) };
 
         return vals;
     }

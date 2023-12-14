@@ -26,8 +26,8 @@ public class Helper {
     private static String databaseName = "tpch";
     private static int noOfColumns;
 
-    //private static String modVal = "9794379537450709974983168981399384873473832303";
-    private static String modVal = "100000007";
+    private static String mulMod = "9794379537450709974983168981399384873473832303";
+    private static int addMod = 100000007;
 
 
     public static Boolean getServer() {
@@ -89,7 +89,7 @@ public class Helper {
     // Multiplicative Mod Functions
 
     public static BigInteger mod(BigInteger number) {
-        BigInteger modulo = new BigInteger(modVal);
+        BigInteger modulo = new BigInteger(mulMod);
         number = number.mod(modulo);
         if (number.compareTo(new BigInteger("0")) < 0)
             number = number.add(modulo);
@@ -100,16 +100,16 @@ public class Helper {
     // Additive Mod Functions
 
     public static int mod(int number) {
-        number = number%100000007;
+        number = number%addMod;
         if (number < 0)
-            number += 100000007;
+            number += addMod;
         return number;
     }
 
     public static long mod(long number) {
-        number = number%100000007;
+        number = number%addMod;
         if (number < 0)
-            number += 100000007;
+            number += addMod;
         return number;
     }
 
