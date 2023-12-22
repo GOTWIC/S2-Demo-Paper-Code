@@ -1,1 +1,4 @@
-Table Created Sucessfully!
+[l_orderkey, l_linenumber, l_shipmode]
+[1, 1, 116114117099107999999999999999999999999999999]
+and
+count(*)

@@ -46,7 +46,19 @@ while True:
                 f.write(f"dbName={temp[0]}\n")
                 f.write(f"tableName={temp[1]}\n")
                 f.close()
-                
+
+               
+
+        
+        if "enc use" in query:
+                # get the db and table name
+                temp = query.replace("enc use ", "").split(".")
+
+                # set the db and table name in config/userinfo.properties
+                f = open("config/userinfo.properties", "w")
+                f.write(f"dbName={temp[0]}\n")
+                f.write(f"tableName={temp[1]}\n")
+                f.close()
 
         Popen(f"java -cp \"C:/Users/shoum/Documents\VLDBPaperDemo/S2-VLDB-2023-main;C:/Users/shoum/Documents\VLDBPaperDemo/S2-VLDB-2023-main/mysqlConnector/mysql-connector-java-8.0.29.jar\" src/QueryParser \"{query}\" > prompt_logs/client.txt")
         

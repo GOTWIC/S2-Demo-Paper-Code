@@ -6,6 +6,9 @@ import utility.Helper;
 import src._00_Database_Table_Creator.Database_Table_Creator;
 import src._01_oneColumnNumberSearch.client.Client01;
 import src._02_oneColumnStringSearch.client.Client02;
+import src._03_AND_Search.client.Client03;
+import src._04_OR_Search.client.Client04;
+import src._05_Multiplicative_Row_Fetch.client.Client05;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -14,6 +17,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.*;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class QueryParser {
@@ -61,7 +65,11 @@ public class QueryParser {
         query = query.substring("from".length()).stripLeading();
 
         if (!query.startsWith(tableName) && !query.startsWith(databaseName + "." + tableName))
-            throw new QueryParseExceptions("Invalid query syntax: Incorrect table name.");
+            throw new QueryParseExceptions("Invalid query syntax: Incorrect database or table name.");
+
+        // split query by space, and get the number of rows from the last element
+        String[] querySplit = query.split(" ");
+        int noOfRows = Integer.parseInt(querySplit[querySplit.length - 1]);
 
         // For now, this will not work since string columns are not in numerical format   
         for (Map.Entry<String, String> entry : columnList.entrySet()) {
@@ -74,7 +82,7 @@ public class QueryParser {
         // Numerical Only Override
         // columns_to_split = "L_ORDERKEY,L_PARTKEY,L_LINENUMBER";
 
-        String[] arguments = new String[]{"4", databaseName, tableName,columns_to_split};
+        String[] arguments = new String[]{String.valueOf(noOfRows), databaseName, tableName,columns_to_split};
         Database_Table_Creator.main(arguments);
 
         // Create server tables 
@@ -223,6 +231,29 @@ LINES TERMINATED BY '\\n'
         // Restore original query to preserve case
         query = origQuery.substring(origQuery.indexOf("where") + "where".length()).stripLeading();
 
+        if(query.toLowerCase().contains(" and "))
+            protocol = "and";
+        else if(query.toLowerCase().contains(" or "))
+            protocol = "or";
+        else
+            protocol = "single";
+
+        query = query.toLowerCase().replaceAll(" and ", ",").replaceAll(" and ", ",").replaceAll(" ","").replaceAll(";", "");
+
+        String[] predicates = query.split(",");
+        for (String predicate : predicates) {
+            String[] predicateSplit = predicate.split("=");
+            String colName = predicateSplit[0];
+            String colValue = predicateSplit[1];
+            if(!columnList.containsKey(colName.toLowerCase()) && !columnList.containsKey(colName.toUpperCase()))
+                throw new QueryParseExceptions("Invalid query syntax: Column " + colName + " not found.");
+            columnNames.add(colName);
+            if(!columnList.get(colName.toUpperCase()).equals("int"))
+                colValue = preprocess(colValue);
+            columnValues.add(colValue);
+        }
+
+        /*
         attribute = query.substring(0, query.indexOf("=")).strip();
         if (!columnList.containsKey(attribute))
             throw new QueryParseExceptions("Column name not found.");
@@ -253,6 +284,8 @@ LINES TERMINATED BY '\\n'
             throw new QueryParseExceptions("Invalid query syntax: conjunctive or disjunctive required");
 
         extractPredicates(query.substring(protocol.length()).stripLeading());
+
+        */
     }
 
     private static String preprocess(String data) throws QueryParseExceptions {
@@ -373,6 +406,50 @@ LINES TERMINATED BY '\\n'
             query = extractprotocolType(query);
             query = validateTableName(query);
             extractPredicates(query);
+            String debug = "";
+            debug += columnNames.toString() + "\n";
+            debug += columnValues.toString() + "\n";
+            debug += protocol + "\n";
+            debug += type + "\n";
+            //debug += predicate + "\n";
+
+
+            writeResult(debug);
+
+            String resultRows;
+
+/*
+            if(type.equals("*") || type.equals("count(*)")){
+                if(protocol.equals("single")){
+                    writeResult("Running single query");
+                }
+                else if(protocol.equals("and")){
+                    String clientData = "";
+                    for(int i = 0; i < columnNames.size(); i++){
+                        clientData += columnNames.get(i) + "," + columnValues.get(i) + ",";
+                    }
+                    String[] clientArgs = new String[]{clientData};
+                    try {
+                        List<Integer> res = Client03.main(clientArgs);
+                        //System.out.println(res.size());
+                        FileWriter writer = new FileWriter("result/prompt.txt");
+                        writer.append(String.valueOf(res.size()));
+                        writer.flush();
+                        writer.close();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                else if(protocol.equals("or")){
+                    writeResult("Running or query");
+                }
+            }
+
+            if(type.equals("count(*)")){
+                writeResult("Running row fetch");
+            }
+
+*/
 
             /*
             System.out.println(protocol);
