@@ -179,7 +179,7 @@ public class Client04 extends Thread {
 
         try {
             ServerSocket ss = new ServerSocket(clientPort);
-            System.out.println("Client Listening........");
+            //
             // listening over socket for incoming connections
             socket = ss.accept();
             timestamps2.add(Instant.now());
@@ -187,7 +187,7 @@ public class Client04 extends Thread {
             // processing data received from server
             new ReceiverSocket(socket).run();
             // printing result of the query
-            Helper.printResult(result, resultFileName);
+            //Helper.printResult(result, resultFileName);
 
             timestamps2.add(Instant.now());
             int totalTime = Math.toIntExact(Helper.getProgramTimes(timestamps1).get(0)) +
@@ -361,9 +361,9 @@ public class Client04 extends Thread {
         server2IP = properties.getProperty("server2IP");
         server2Port = Integer.parseInt(properties.getProperty("server2Port")) + portIncrement;
         server3IP = properties.getProperty("server3IP");
-        server3Port = Integer.parseInt(properties.getProperty("server3Port"));
+        server3Port = Integer.parseInt(properties.getProperty("server3Port")) + portIncrement;
         server4IP = properties.getProperty("server4IP");
-        server4Port = Integer.parseInt(properties.getProperty("server4Port"));
+        server4Port = Integer.parseInt(properties.getProperty("server4Port")) + portIncrement;
         combinerIP = properties.getProperty("combinerIP");
         combinerPort = Integer.parseInt(properties.getProperty("combinerPort")) + portIncrement;
 
@@ -374,29 +374,9 @@ public class Client04 extends Thread {
         multiplicativeShares = new String[columnCount][columnCount + 1];
     }
 
-
-    private static void loadTableMetaData(){
-        // Open csv file at "data/metadata/table_metadata.csv" and load into tableMetaData hasmap
-        String csvFile = "data/metadata/table_metadata.csv";
-        BufferedReader br = null;
-        String line = "";
-        String cvsSplitBy = ",";
-        try {
-            br = new BufferedReader(new FileReader(csvFile));
-            while ((line = br.readLine()) != null) {
-                String[] table_metadata = line.split(cvsSplitBy);
-                tableMetadata.put("M_" + table_metadata[0], Integer.parseInt(table_metadata[1]));
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     private static int getColumnType(String col_name){
-        if(tableMetadata.isEmpty()){
-            loadTableMetaData();
-        }
-        return tableMetadata.get(col_name);
+        tableMetadata = Helper.getColumnList();
+        return tableMetadata.get(col_name.replace("M_", "").toLowerCase());
     }
 
     /**
@@ -405,7 +385,7 @@ public class Client04 extends Thread {
      * @param args takes as string a list of column name and column value e.g. "suppkey,145,linenumber,1,partkey,12"
      * @throws InterruptedException
      */
-    public static void main(String[] args) throws InterruptedException {
+    public static String main(String[] args) throws InterruptedException {
         timestamps1.add(Instant.now());
 
         doPreWork(args);
@@ -413,6 +393,8 @@ public class Client04 extends Thread {
         doWork();
 
         doPostWork();
+
+        return result.toString();
     }
 }
 

@@ -93,7 +93,6 @@ public class Client01 extends Thread {
             for (int i = startRow; i < endRow; i++) {
                 prg = randSeedClient.nextInt(Constants.getMaxRandomBound() -
                         Constants.getMinRandomBound()) + Constants.getMinRandomBound();
-                System.out.println("prg: " + prg);
                 if (resultCombiner[i] == prg) {
                     result.add(i + 1);
                 }
@@ -274,18 +273,18 @@ public class Client01 extends Thread {
      * @param args takes as string a column name and column value e.g. "suppkey,145"
      * @throws InterruptedException
      */
-    public static void main(String[] args) throws InterruptedException {
+    public static String main(String[] args) throws InterruptedException {
         timestamps1.add(Instant.now());
 
         doPreWork(args);
 
         doWork();
 
-        List<Integer> returnResult = doPostWork();
+        String returnResult = doPostWork().toString();
 
-        System.out.println(returnResult.size() + " rows found.");
+        //System.out.println(returnResult.size() + " rows found.");
 
-        //return returnResult;
+        return returnResult;
     }
 }
 

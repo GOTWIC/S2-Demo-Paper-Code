@@ -32,7 +32,7 @@ public class QueryParser {
 
 
     // to store metadata contents
-    private static HashMap<String, String> columnList = new HashMap<>();
+    private static HashMap<String, Integer> columnList = new HashMap<>();
     private static String tableName;
     private static String databaseName;
     private static int noOfColumns;
@@ -71,16 +71,11 @@ public class QueryParser {
         String[] querySplit = query.split(" ");
         int noOfRows = Integer.parseInt(querySplit[querySplit.length - 1]);
 
-        // For now, this will not work since string columns are not in numerical format   
-        for (Map.Entry<String, String> entry : columnList.entrySet()) {
+        for (Map.Entry<String, Integer> entry : columnList.entrySet()) {
             String colName = entry.getKey();
-            String colType = entry.getValue();
-            //if(colType.contains("char") || colType.contains("int"))
             columns_to_split += colName + ",";
         }
 
-        // Numerical Only Override
-        // columns_to_split = "L_ORDERKEY,L_PARTKEY,L_LINENUMBER";
 
         String[] arguments = new String[]{String.valueOf(noOfRows), databaseName, tableName,columns_to_split};
         Database_Table_Creator.main(arguments);
@@ -115,37 +110,37 @@ LINES TERMINATED BY '\\n'
             //IGNORE 1 ROWS;
             
             // Append additive columns for table definition
-            for (Map.Entry<String, String> entry : columnList.entrySet()) {
+            for (Map.Entry<String, Integer> entry : columnList.entrySet()) {
                 String colName = entry.getKey();
-                String colType = entry.getValue();
+                int colType = entry.getValue();
+                String colTypeString = "int";
 
                 // basic check to prevent non-specific columns from being added
                 if(!columns_to_split.contains(colName))
                     continue;
                 
                 // converts non-int columns to varchars
-                if(!colType.contains("int"))
-                    colType = "varchar(255)";
+                if(colType != 0)
+                    colTypeString = "varchar(255)";
                 
-                if(colType.contains("char") || colType.contains("int"))
-                    createTableQuery += "\n" + "A_" + colName + " " + colType + ", ";
+                createTableQuery += "\n" + "A_" + colName + " " + colTypeString + ", ";
             }
 
             // Append multiplicative columns for table definition
-            for (Map.Entry<String, String> entry : columnList.entrySet()) {
+            for (Map.Entry<String, Integer> entry : columnList.entrySet()) {
                 String colName = entry.getKey();
-                String colType = entry.getValue();
+                int colType = entry.getValue();
+                String colTypeString = "int";
  
                 // basic check to prevent non-specific columns from being added
                 if(!columns_to_split.contains(colName))
                     continue;
 
-                // converts non-int columns to varchars
-                if(!colType.contains("int"))
-                    colType = "varchar(255)";
-
-                if(colType.contains("char") || colType.contains("int"))
-                    createTableQuery += "\n" + "M_" + colName + " " + colType + ", ";
+                /// converts non-int columns to varchars
+                if(colType != 0)
+                    colTypeString = "varchar(255)";
+                
+                createTableQuery += "\n" + "M_" + colName + " " + colTypeString + ", ";
             }
 
             // Append rowID column
@@ -238,17 +233,18 @@ LINES TERMINATED BY '\\n'
         else
             protocol = "single";
 
-        query = query.toLowerCase().replaceAll(" and ", ",").replaceAll(" and ", ",").replaceAll(" ","").replaceAll(";", "");
+        query = query.toLowerCase().replaceAll(" and ", ",").replaceAll(" or ", ",").replaceAll(" ","").replaceAll(";", "");
+
 
         String[] predicates = query.split(",");
         for (String predicate : predicates) {
             String[] predicateSplit = predicate.split("=");
             String colName = predicateSplit[0];
             String colValue = predicateSplit[1];
-            if(!columnList.containsKey(colName.toLowerCase()) && !columnList.containsKey(colName.toUpperCase()))
+            if(!columnList.containsKey(colName.toLowerCase()))
                 throw new QueryParseExceptions("Invalid query syntax: Column " + colName + " not found.");
-            columnNames.add(colName);
-            if(!columnList.get(colName.toUpperCase()).equals("int"))
+            columnNames.add(colName.toUpperCase());
+            if(columnList.get(colName.toLowerCase()) != 0)
                 colValue = preprocess(colValue);
             columnValues.add(colValue);
         }
@@ -377,12 +373,6 @@ LINES TERMINATED BY '\\n'
     
     public static void main(String[] args) throws QueryParseExceptions, IOException {
 
-        Helper.getMetadata();
-        tableName = Helper.getTableName();
-        databaseName = Helper.getDatabaseName();
-        noOfColumns = Helper.getNoOfColumns();
-        columnList = Helper.getColumnList();    
-
         String query = args[0];
         origQuery = query;
         query = query.strip().toLowerCase();
@@ -391,6 +381,11 @@ LINES TERMINATED BY '\\n'
             execute_query(query);
             return;
         }
+
+        tableName = Helper.getTableName();
+        databaseName = Helper.getDatabaseName();
+        noOfColumns = Helper.getNoOfColumns();
+        columnList = Helper.getColumnList();  
 
         query = query.replace("enc ", "");
 
@@ -411,17 +406,32 @@ LINES TERMINATED BY '\\n'
             debug += columnValues.toString() + "\n";
             debug += protocol + "\n";
             debug += type + "\n";
-            //debug += predicate + "\n";
 
 
-            writeResult(debug);
+            String resultRows = "";
 
-            String resultRows;
 
-/*
             if(type.equals("*") || type.equals("count(*)")){
                 if(protocol.equals("single")){
-                    writeResult("Running single query");
+                    String[] clientArgs = new String[]{columnNames.get(0) + "," + columnValues.get(0)};
+                    if(columnList.get(columnNames.get(0).toLowerCase()) == 0){
+                        try {
+                            String res = Client01.main(clientArgs);
+                            res = res.replaceAll("\\[", "").replaceAll("\\]", "").replaceAll(" ", "");
+                            resultRows = res;
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    else{
+                        try {
+                            String res = Client02.main(clientArgs);
+                            res = res.replaceAll("\\[", "").replaceAll("\\]", "").replaceAll(" ", "");
+                            resultRows = res;
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
                 else if(protocol.equals("and")){
                     String clientData = "";
@@ -430,55 +440,49 @@ LINES TERMINATED BY '\\n'
                     }
                     String[] clientArgs = new String[]{clientData};
                     try {
-                        List<Integer> res = Client03.main(clientArgs);
-                        //System.out.println(res.size());
-                        FileWriter writer = new FileWriter("result/prompt.txt");
-                        writer.append(String.valueOf(res.size()));
-                        writer.flush();
-                        writer.close();
+                        String res = Client03.main(clientArgs);
+                        res = res.replaceAll("\\[", "").replaceAll("\\]", "").replaceAll(" ", "");
+                        resultRows = res;
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                 }
                 else if(protocol.equals("or")){
-                    writeResult("Running or query");
+                    String clientData = "";
+                    for(int i = 0; i < columnNames.size(); i++){
+                        clientData += columnNames.get(i) + "," + columnValues.get(i) + ",";
+                    }
+                    String[] clientArgs = new String[]{clientData};
+                    try {
+                        String res = Client04.main(clientArgs);
+                        res = res.replaceAll("\\[", "").replaceAll("\\]", "").replaceAll(" ", "");
+                        resultRows = res;
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
 
             if(type.equals("count(*)")){
-                writeResult("Running row fetch");
+                // count number of values in resultRows
+                String[] resultRowsSplit = resultRows.split(",");
+                writeResult(resultRowsSplit.length + " rows match the query");
             }
+            if(type.equals("*")){
 
-*/
+                if(resultRows == ""){
+                    writeResult("No rows match the query");
+                    return;
+                }
 
-            /*
-            System.out.println(protocol);
-            System.out.println(type);
-            for (int i = 0; i < columnNames.size(); i++) {
-                predicate += columnNames.get(i) + "," + columnValues.get(i) + ",";
-            }
-            System.out.println(predicate);
-            */
-
-            /*
-            if (type == "*" || type == "count(*)"){
-                String[] arguments = new String[]{columnNames.get(0) + "," + columnValues.get(0)};
+                String[] clientArgs = new String[]{resultRows};
                 try {
-                    List<Integer> res = Client02.main(arguments);
-                    //System.out.println(res.size());
-                    FileWriter writer = new FileWriter("result/prompt.txt");
-                    writer.append(String.valueOf(res.size()));
-                    writer.flush();
-                    writer.close();
+                    String res = Client05.main(clientArgs);
+                    writeResult(res);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
-
-            if (type == "*"){
-                System.out.println("Running row fetch");
-            }
-            */
         }
     }
 }

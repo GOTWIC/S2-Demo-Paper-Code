@@ -98,7 +98,7 @@ public class Server1 {
                 String columns = Helper.strArrToStr(columnNameCopy);
 
                 System.out.println(columns);
-
+                System.out.println("\n");
 
 
                 String query = query_base1 + columns + query_base2 + startRow + " LIMIT " + numRowsPerThread;
@@ -265,28 +265,11 @@ public class Server1 {
         combinerIP = properties.getProperty("combinerIP");
     }
 
-    private static void loadTableMetaData(){
-        // Open csv file at "data/metadata/table_metadata.csv" and load into tableMetaData hasmap
-        String csvFile = "data/metadata/table_metadata.csv";
-        BufferedReader br = null;
-        String line = "";
-        String cvsSplitBy = ",";
-        try {
-            br = new BufferedReader(new FileReader(csvFile));
-            while ((line = br.readLine()) != null) {
-                String[] table_metadata = line.split(cvsSplitBy);
-                tableMetadata.put(table_metadata[0], Integer.parseInt(table_metadata[1]));
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+    
 
     private static int getColumnType(String col_name){
-        if(tableMetadata.isEmpty()){
-            loadTableMetaData();
-        }
-        return tableMetadata.get(col_name);
+        tableMetadata = Helper.getColumnList();
+        return tableMetadata.get(col_name.toLowerCase());
     }
 
     // performs server task required to process client query

@@ -6,12 +6,12 @@ import java.util.*;
 
 
 public class convertCSV {
-    private static LinkedHashMap<String, String> columnList = null;
+    private static LinkedHashMap<String, Integer> columnList = null;
     static {
-        Helper.getMetadata();
+        Helper.getTableMetadata();
         columnList = Helper.getColumnList();
     }
-    public static HashMap<String, String> getColumnList(){
+    public static HashMap<String, Integer> getColumnList(){
         return columnList;
     }
     private static Properties properties;
@@ -110,7 +110,7 @@ public class convertCSV {
                 newLine = true;
             }
             data1 = data1.replace("\n","").replace("\r", "");
-            String data2 = columnList.get(columnNames[i]);
+            String data2 = String.valueOf(columnList.get(columnNames[i]));
             if(Objects.equals(data2, "string")) {
                 //global max length
 //                if(data1.length() > maxLength)
@@ -142,7 +142,7 @@ public class convertCSV {
         String data1 = "";
         boolean newLine;
         Properties properties = getProperties();
-        HashMap<String, String> colList = getColumnList();
+        HashMap<String, Integer> colList = getColumnList();
         Scanner sc = new Scanner(new File("data/cleartext/table_numeric.csv")); //converted file
 
         //read first line(col names) and write into new converted file
@@ -158,7 +158,7 @@ public class convertCSV {
                 newLine = true;
             }
             data1 = data1.replace("\n","").replace("\r", "");
-            String data2 = colList.get(columnNames[i]);
+            String data2 = String.valueOf(columnList.get(columnNames[i]));
             if(Objects.equals(data2, "string")) {
                 while(data1.length()/2 < max) {
                     data1 = data1 + "99";

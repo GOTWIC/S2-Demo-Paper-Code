@@ -295,18 +295,18 @@ public class Client02 extends Thread {
      * @param args takes as string a column name and column value e.g. "suppkey,145"
      * @throws InterruptedException
      */
-    public static void main(String[] args) throws InterruptedException {
+    public static String main(String[] args) throws InterruptedException {
         timestamps1.add(Instant.now());
 
         doPreWork(args);
 
         doWork();
 
-        List<Integer> returnResult = doPostWork();
+        String returnResult = doPostWork().toString();
 
-        System.out.println("Result size: " + returnResult.size());
+        //System.out.println("Result size: " + returnResult.size());
 
-        //return returnResult;
+        return returnResult;
     }
 }
 

@@ -163,7 +163,7 @@ public class Client03 extends Thread {
 
         try {
             ServerSocket ss = new ServerSocket(clientPort);
-            System.out.println("Client Listening........");
+            //
             // listening over socket for incoming connections
             socket = ss.accept();
             timestamps2.add(Instant.now());
@@ -171,7 +171,7 @@ public class Client03 extends Thread {
             // processing data received from server
             new ReceiverSocket(socket).run();
             // printing result of the query
-            Helper.printResult(result, resultFileName);
+            //Helper.printResult(result, resultFileName);
 
             timestamps2.add(Instant.now());
             int totalTime = Math.toIntExact(Helper.getProgramTimes(timestamps1).get(0)) +
@@ -277,28 +277,11 @@ public class Client03 extends Thread {
         }
     }
 
-    private static void loadTableMetaData(){
-        // Open csv file at "data/metadata/table_metadata.csv" and load into tableMetaData hasmap
-        String csvFile = "data/metadata/table_metadata.csv";
-        BufferedReader br = null;
-        String line = "";
-        String cvsSplitBy = ",";
-        try {
-            br = new BufferedReader(new FileReader(csvFile));
-            while ((line = br.readLine()) != null) {
-                String[] table_metadata = line.split(cvsSplitBy);
-                tableMetadata.put(table_metadata[0], Integer.parseInt(table_metadata[1]));
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     private static int getColumnType(String col_name){
         if(tableMetadata.isEmpty()){
-            loadTableMetaData();
+            tableMetadata = Helper.getColumnList();
         }
-        return tableMetadata.get(col_name);
+        return tableMetadata.get(col_name.toLowerCase());
     }
 
     /**
@@ -344,7 +327,7 @@ public class Client03 extends Thread {
      * @param args takes as string a list of column name and column value e.g. "suppkey,145,linenumber,1,partkey,12"
      * @throws InterruptedException
      */
-    public static void main(String[] args) throws InterruptedException {
+    public static String main(String[] args) throws InterruptedException {
         timestamps1.add(Instant.now());
 
         doPreWork(args);
@@ -352,6 +335,8 @@ public class Client03 extends Thread {
         doWork();
 
         doPostWork();
+
+        return result.toString();
     }
 }
 

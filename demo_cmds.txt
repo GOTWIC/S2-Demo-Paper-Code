@@ -1,0 +1,25 @@
+cd C:\Users\shoum\Documents\VLDBPaperDemo\S2-VLDB-2023-main
+
+python prompt.py
+
+create schema mygarage
+
+create table mygarage.lamborghini (MODEL varchar(255), YEAR int, COLOR varchar(255))
+
+insert into mygarage.lamborghini values ("aventador",2022,"black"),("urus",2018,"yellow"),("huracan",2020,"green"),("terzo",2017,"black")
+
+enc create table from mygarage.lamborghini 4
+
+enc select * from mygarage.lamborghini where YEAR = 2022;
+
+enc select * from mygarage.lamborghini where MODEL = aventador;
+
+enc select * from mygarage.lamborghini where YEAR = 2017;
+
+enc select * from mygarage.lamborghini where COLOR = black;
+
+enc select * from mygarage.lamborghini where YEAR = 2017 AND COLOR = black;
+
+enc select * from mygarage.lamborghini where YEAR = 2020 OR COLOR = black;
+
+quit

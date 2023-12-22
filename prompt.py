@@ -72,9 +72,6 @@ while True:
                 f.write(f"dbName={temp[0]}\n")
                 f.write(f"tableName={temp[1]}\n")
                 f.close()
-
-               
-
         
         if "enc use" in query:
                 # get the db and table name
@@ -86,7 +83,10 @@ while True:
                 f.write(f"tableName={temp[1]}\n")
                 f.close()
 
-        Popen(f"java -cp \"" + classPath + "\" src/QueryParser \"{query}\" > prompt_logs/client.txt")
+        if "\"" in query:
+                query = query.replace("\"", "\\\"")
+
+        Popen("java -cp \"" + classPath + f"\" src/QueryParser \"{query}\" > prompt_logs/client.txt")
         
         while True:
                 f = open("result/prompt.txt", "r")

@@ -111,8 +111,8 @@ public class Client05 extends Thread {
             }
         }
 
-        // print result for each row id
-        Helper.printResult(resultCombiner, queryList, resultFileName, colNames, colTypes);
+        // we return the string equivalent of this function in the main function
+        //Helper.printResult(resultCombiner, queryList, resultFileName, colNames, colTypes);
 
     }
 
@@ -145,7 +145,7 @@ public class Client05 extends Thread {
 
         try {
             ServerSocket ss = new ServerSocket(clientPort);
-            System.out.println("Client Listening........");
+            
             // listening over socket for incoming connections
             socket = ss.accept();
             timestamps2.add(Instant.now());
@@ -301,9 +301,9 @@ public class Client05 extends Thread {
         server2IP = properties.getProperty("server2IP");
         server2Port = Integer.parseInt(properties.getProperty("server2Port")) + portIncrement;
         server3IP = properties.getProperty("server3IP");
-        server3Port = Integer.parseInt(properties.getProperty("server3Port"));
+        server3Port = Integer.parseInt(properties.getProperty("server3Port")) + portIncrement;
         server4IP = properties.getProperty("server4IP");
-        server4Port = Integer.parseInt(properties.getProperty("server4Port"));
+        server4Port = Integer.parseInt(properties.getProperty("server4Port")) + portIncrement;
 
         int filter_size = (int) Math.sqrt(numRows);
         row_filter = new BigInteger[querySize][filter_size];
@@ -355,8 +355,9 @@ public class Client05 extends Thread {
      *
      * @param args takes as string a list of row ids e.g. "1,2,5,6"
      * @throws InterruptedException
+     * @throws IOException
      */
-    public static void main(String[] args) throws InterruptedException {
+    public static String main(String[] args) throws InterruptedException, IOException {
         timestamps1.add(Instant.now());
 
         doPreWork(args);
@@ -364,6 +365,8 @@ public class Client05 extends Thread {
         doWork();
 
         doPostWork();
+
+        return Helper.rowFetchResultString(resultCombiner, queryList, resultFileName, colNames, colTypes);
     }
 }
 

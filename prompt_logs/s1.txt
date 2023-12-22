@@ -1,0 +1,11 @@
+Server2 Listening........
+Row Val: -407524 prgServer: 2 addShare2: 2019 result: 99180921
+Row Val: -659204 prgServer: 7 addShare2: 2019 result: 95371446
+Row Val: -576402 prgServer: 2 addShare2: 2019 result: 98843165
+Row Val: -485987 prgServer: 4 addShare2: 2019 result: 98047983
+Server2 Result: [99180921, 95371446, 98843165, 98047983]
+Row Val: -407524 prgServer: 2 addShare2: 2011 result: 99180937
+Row Val: -659204 prgServer: 7 addShare2: 2011 result: 95371502
+Row Val: -576402 prgServer: 2 addShare2: 2011 result: 98843181
+Row Val: -485987 prgServer: 4 addShare2: 2011 result: 98048015
+Server2 Result: [99180937, 95371502, 98843181, 98048015]

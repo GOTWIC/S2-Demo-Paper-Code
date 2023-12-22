@@ -21,7 +21,7 @@ public class Helper {
     private static final String mainDir = "";
     private static final Logger log = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
-    private static LinkedHashMap<String, String> columnList = new LinkedHashMap<>();
+    private static LinkedHashMap<String, Integer> columnList = new LinkedHashMap<>();
     private static int noOfColumns;
 
     private static String mulMod = "9794379537450709974983168981399384873473832303";
@@ -211,6 +211,52 @@ public class Helper {
             bufferedWriter.append("\n");
         }
         bufferedWriter.close();
+    }
+
+    public static String rowFetchResultString(BigInteger[][] result, int[] query, String fileName, ArrayList<String> colNames, ArrayList<Integer> colTypes) throws IOException {
+
+        String returnResult;
+
+        FileWriter writer = new FileWriter(mainDir + "result/" + fileName);
+        BufferedWriter bufferedWriter = new BufferedWriter(writer);
+
+        ArrayList<Integer> colWidths = new ArrayList<>();
+
+        String header = "";
+
+        // Print column names, and pad each name so that the total length is 15 characters
+        for (int i = 0; i < colNames.size(); i++) {
+            String colName = colNames.get(i);
+            header += colName;
+            header += "     ";
+            colWidths.add(colName.length() + 5);
+        }
+
+        returnResult = header + "\n";
+
+        for (int i = 0; i < result.length; i++) {
+            bufferedWriter.append(String.valueOf(query[i] + 1)).append("\n");
+            String temp="";
+            for (int j = 0; j < result[0].length; j++) {
+                String temp_val = result[i][j].toString();
+                if(colTypes.get(j)!=0)
+                    temp_val = Helper.ascii_reverse(temp_val);
+                bufferedWriter.append((temp_val)).append(",");
+                if(temp_val.length()>colWidths.get(j))
+                    temp_val = temp_val.substring(0,colWidths.get(j)-6)+"...";
+                String spaces = "";
+                for (int k = 0; k < colWidths.get(j) - temp_val.length(); k++) {
+                    spaces += " ";
+                }
+                temp+=temp_val+spaces;
+            }
+            temp = temp.substring(0, temp.length() - 1);
+            returnResult += temp + "\n";
+            bufferedWriter.append("\n");
+        }
+        bufferedWriter.close();
+
+        return returnResult;
     }
 
     public static ArrayList<Long> getProgramTimes(ArrayList<Instant> timestamps) {
@@ -442,6 +488,7 @@ public class Helper {
         return result;
     }
 
+    /*
     public static void getMetadata() {
         Connection con = null;
         try {
@@ -458,12 +505,47 @@ public class Helper {
 
                 while(rs.next()){
                         String col_type = rs.getString("Type");
-                        columnList.put(rs.getString("Field"),col_type);
+                        columnList.put(rs.getString("Field").toUpperCase(),col_type);
                 }
 
                 noOfColumns = columnList.size();
         } catch (Exception e) {
                 e.printStackTrace();
+        }
+    }
+    */
+
+    public static void getTableMetadata() {
+        Statement stmt;
+        ResultSet rs;
+        Connection con = null;
+
+        try {
+                con = Helper.getConnection();
+        } catch (SQLException e) {
+                e.printStackTrace();
+        }
+
+        try {
+            stmt = con.createStatement();
+            rs = stmt.executeQuery("show COLUMNS from " + getDatabaseName() + "." + getTableName());
+
+            // reset columnList
+            columnList = new LinkedHashMap<>();
+
+            while (rs.next()) {
+                String col_type_str = rs.getString("Type");
+                int col_type = 1;
+                if (col_type_str.contains("int"))
+                    col_type = 0;
+                else if (col_type_str.contains("char"))
+                    col_type = 1;
+                else if (col_type_str.contains("date"))
+                    col_type = 2;
+                columnList.put(rs.getString("Field").toLowerCase(), col_type);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -481,7 +563,8 @@ public class Helper {
         return noOfColumns;
     }
 
-    public static LinkedHashMap<String,String> getColumnList(){
+    public static LinkedHashMap<String,Integer> getColumnList(){
+        getTableMetadata();
         return columnList;
     }
 
