@@ -61,7 +61,9 @@ public class Server4 {
 
     private static int numCols; 
     private static String columnNames = "";
-     private static String[] columnNamesArr;
+    private static String[] columnNamesArr;
+
+    private static final int portIncrement = 40;
 
     // operation performed by each thread
     private static class ParallelTask implements Runnable {
@@ -257,8 +259,8 @@ public class Server4 {
         numThreads = Integer.parseInt(properties.getProperty("numThreads"));
         numRowsPerThread = numRows / numThreads;
 
-        serverPort = Integer.parseInt(properties.getProperty("serverPort"));
-        combinerPort = Integer.parseInt(properties.getProperty("combinerPort"));
+        serverPort = Integer.parseInt(properties.getProperty("serverPort")) + portIncrement;
+        combinerPort = Integer.parseInt(properties.getProperty("combinerPort")) + portIncrement;
         combinerIP = properties.getProperty("combinerIP");
 
         filter_size = (int) Math.sqrt(numRows);

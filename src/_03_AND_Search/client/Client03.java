@@ -68,6 +68,8 @@ public class Client03 extends Thread {
 
     static Map<String, Integer> tableMetadata = new HashMap<String, Integer>();
 
+    private static final int portIncrement = 20;
+
     // default constructor
     private Client03() {
     }
@@ -327,11 +329,11 @@ public class Client03 extends Thread {
         numThreads = Integer.parseInt(properties.getProperty("numThreads"));
         numRowsPerThread = numRows / numThreads;
 
-        clientPort = Integer.parseInt(properties.getProperty("clientPort"));
+        clientPort = Integer.parseInt(properties.getProperty("clientPort")) + portIncrement;
         server1IP = properties.getProperty("server1IP");
-        server1Port = Integer.parseInt(properties.getProperty("server1Port"));
+        server1Port = Integer.parseInt(properties.getProperty("server1Port")) + portIncrement;
         server2IP = properties.getProperty("server2IP");
-        server2Port = Integer.parseInt(properties.getProperty("server2Port"));
+        server2Port = Integer.parseInt(properties.getProperty("server2Port")) + portIncrement;
 
         resultCombiner = new int[numRows];
     }

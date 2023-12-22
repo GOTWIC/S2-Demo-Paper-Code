@@ -1,22 +1,50 @@
 from subprocess import Popen
 import time
 
+basePath = "C:/Users/shoum/Documents/VLDBPaperDemo/S2-VLDB-2023-main"
+classPath = basePath + ";" + basePath + "/mysqlConnector/mysql-connector-java-8.0.29.jar"
+
 # Compile
 
 def compile_scripts():
-    Popen("javac -cp \"C:/Users/shoum/Documents\VLDBPaperDemo/S2-VLDB-2023-main;C:/Users/shoum/Documents\VLDBPaperDemo/S2-VLDB-2023-main/mysqlConnector/mysql-connector-java-8.0.29.jar\" src/_00_Database_Table_Creator/*.java")
+    # Database Table Creator
+    Popen("javac -cp \"" + classPath + "\" src/_00_Database_Table_Creator/*.java")
 
-    Popen("javac -cp \"C:/Users/shoum/Documents\VLDBPaperDemo/S2-VLDB-2023-main;C:/Users/shoum/Documents\VLDBPaperDemo/S2-VLDB-2023-main/mysqlConnector/mysql-connector-java-8.0.29.jar\" src/_01_oneColumnNumberSearch/client/*.java src/_01_oneColumnNumberSearch/combiner/*.java src/_01_oneColumnNumberSearch/server/*.java")
-    Popen("javac -cp \"C:/Users/shoum/Documents\VLDBPaperDemo/S2-VLDB-2023-main;C:/Users/shoum/Documents\VLDBPaperDemo/S2-VLDB-2023-main/mysqlConnector/mysql-connector-java-8.0.29.jar\" src/_02_oneColumnStringSearch/client/*.java src/_02_oneColumnStringSearch/combiner/*.java src/_02_oneColumnStringSearch/server/*.java")
+    # One Column Number Search
+    Popen("javac -cp \"" + classPath + "\" src/_01_oneColumnNumberSearch/client/*.java src/_01_oneColumnNumberSearch/combiner/*.java src/_01_oneColumnNumberSearch/server/*.java")
+    
+    # One Column String Search
+    Popen("javac -cp \"" + classPath + "\" src/_02_oneColumnStringSearch/client/*.java src/_02_oneColumnStringSearch/combiner/*.java src/_02_oneColumnStringSearch/server/*.java")
 
-    Popen("javac -cp \"C:/Users/shoum/Documents\VLDBPaperDemo/S2-VLDB-2023-main;C:/Users/shoum/Documents\VLDBPaperDemo/S2-VLDB-2023-main/mysqlConnector/mysql-connector-java-8.0.29.jar\" src/*.java")
-    Popen("javac -cp \"C:/Users/shoum/Documents\VLDBPaperDemo/S2-VLDB-2023-main;C:/Users/shoum/Downloads/S2-VLDB-2023-original/S2-VLDB-2023-main/mysqlConnector/mysql-connector-java-8.0.29.jar\" utility/Helper.java")
+    # AND Search
+    Popen("javac -cp \"" + classPath + "\" src/_03_AND_Search/client/*.java src/_03_AND_Search/combiner/*.java src/_03_AND_Search/server/*.java")
+
+    # OR Search
+    Popen("javac -cp \"" + classPath + "\" src/_04_OR_Search/client/*.java src/_04_OR_Search/combiner/*.java src/_04_OR_Search/server/*.java")
+
+    # Multiplicative Row Fetch
+    Popen("javac -cp \"" + classPath + "\" src/_05_Multiplicative_Row_Fetch/client/*.java src/_05_Multiplicative_Row_Fetch/combiner/*.java src/_05_Multiplicative_Row_Fetch/server/*.java")
+
+    # Helper
+    Popen("javac -cp \"" + classPath + "\" utility/Helper.java")
+
+    # Everything Else
+    Popen("javac -cp \"" + classPath + "\" src/*.java")
+    
 
 
 def run_scripts():
-    Popen("java -cp \"C:/Users/shoum/Documents\VLDBPaperDemo/S2-VLDB-2023-main;C:/Users/shoum/Documents\VLDBPaperDemo/S2-VLDB-2023-main/mysqlConnector/mysql-connector-java-8.0.29.jar\" src._02_oneColumnStringSearch.server.Server1 > prompt_logs/s1.txt", shell = True)
-    Popen("java -cp \"C:/Users/shoum/Documents\VLDBPaperDemo/S2-VLDB-2023-main;C:/Users/shoum/Documents\VLDBPaperDemo/S2-VLDB-2023-main/mysqlConnector/mysql-connector-java-8.0.29.jar\" src._02_oneColumnStringSearch.server.Server2 > prompt_logs/s2.txt", shell = True)
-    Popen("java -cp \"C:/Users/shoum/Documents\VLDBPaperDemo/S2-VLDB-2023-main;C:/Users/shoum/Documents\VLDBPaperDemo/S2-VLDB-2023-main/mysqlConnector/mysql-connector-java-8.0.29.jar\" src._02_oneColumnStringSearch.combiner.Combiner > prompt_logs/comb.txt", shell = True)
+    serverCounts = [2,2,2,4,4]
+    folderNames = ["_01_oneColumnNumberSearch", "_02_oneColumnStringSearch", "_03_AND_Search", "_04_OR_Search", "_05_Multiplicative_Row_Fetch"]
+
+    serverCounter = 0
+
+    for i in range(len(serverCounts)):
+        for j in range(serverCounts[i]):
+            Popen("java -cp \"" + classPath + "\" src/" + folderNames[i] + "/server/Server" + str(j+1) + " > prompt_logs/s" + str(serverCounter) + ".txt", shell = True)
+            serverCounter += 1
+
+        Popen("java -cp \"" + classPath + "\" src/" + folderNames[i] + "/combiner/Combiner > prompt_logs/comb" + str(i)  + ".txt", shell = True)
 
 compile_scripts()
 run_scripts()
@@ -27,8 +55,6 @@ time.sleep(1)
        
 while True:
         
-        
-
         query = input("> ")
 
         if query == "quit":
@@ -60,7 +86,7 @@ while True:
                 f.write(f"tableName={temp[1]}\n")
                 f.close()
 
-        Popen(f"java -cp \"C:/Users/shoum/Documents\VLDBPaperDemo/S2-VLDB-2023-main;C:/Users/shoum/Documents\VLDBPaperDemo/S2-VLDB-2023-main/mysqlConnector/mysql-connector-java-8.0.29.jar\" src/QueryParser \"{query}\" > prompt_logs/client.txt")
+        Popen(f"java -cp \"" + classPath + "\" src/QueryParser \"{query}\" > prompt_logs/client.txt")
         
         while True:
                 f = open("result/prompt.txt", "r")

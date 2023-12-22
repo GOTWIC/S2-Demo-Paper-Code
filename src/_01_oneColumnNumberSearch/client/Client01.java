@@ -60,6 +60,8 @@ public class Client01 extends Thread {
     // the name of file storing the query result under result/ folder
     private static final String resultFileName = "_01_oneColumnStringSearch";
 
+    private static final int portIncrement = 0;
+
 
     // default constructor
     private Client01() {
@@ -257,11 +259,11 @@ public class Client01 extends Thread {
         numThreads = Integer.parseInt(properties.getProperty("numThreads"));
         numRowsPerThread = numRows / numThreads;
 
-        clientPort = Integer.parseInt(properties.getProperty("clientPort"));
+        clientPort = Integer.parseInt(properties.getProperty("clientPort")) + portIncrement;
         server1IP = properties.getProperty("server1IP");
-        server1Port = Integer.parseInt(properties.getProperty("server1Port"));
+        server1Port = Integer.parseInt(properties.getProperty("server1Port")) + portIncrement;
         server2IP = properties.getProperty("server2IP");
-        server2Port = Integer.parseInt(properties.getProperty("server2Port"));
+        server2Port = Integer.parseInt(properties.getProperty("server2Port")) + portIncrement;
 
         resultCombiner = new int[numRows];
     }

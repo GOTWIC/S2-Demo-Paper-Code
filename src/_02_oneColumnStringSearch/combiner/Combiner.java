@@ -45,6 +45,8 @@ public class Combiner extends Thread {
     private static final Logger log = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
     private static ArrayList<Instant> timestamps = new ArrayList<>();
 
+    private static final int portIncrement = 10;
+
     // operation performed by each thread
     private static class ParallelTask implements Runnable {
         private int threadNum;
@@ -187,9 +189,9 @@ public class Combiner extends Thread {
         numThreads = Integer.parseInt(properties.getProperty("numThreads"));
         numRowsPerThread = numRows / numThreads;
 
-        clientPort = Integer.parseInt(properties.getProperty("clientPort"));
+        clientPort = Integer.parseInt(properties.getProperty("clientPort")) + portIncrement;
         clientIP = properties.getProperty("clientIP");
-        combinerPort = Integer.parseInt(properties.getProperty("combinerPort"));
+        combinerPort = Integer.parseInt(properties.getProperty("combinerPort")) + portIncrement;
 
         result = new int[numRows];
     }

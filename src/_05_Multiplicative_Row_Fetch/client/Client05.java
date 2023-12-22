@@ -79,6 +79,8 @@ public class Client05 extends Thread {
     // the name of file storing the query result under result/ folder
     private static final String resultFileName = "_05_Multiplicative_Row_Fetch";
 
+    private static final int portIncrement = 40;
+
 
     // default constructor
     private Client05() {
@@ -293,11 +295,11 @@ public class Client05 extends Thread {
 
         numRows = Integer.parseInt(properties.getProperty("numRows"));
 
-        clientPort = Integer.parseInt(properties.getProperty("clientPort"));
+        clientPort = Integer.parseInt(properties.getProperty("clientPort")) + portIncrement;
         server1IP = properties.getProperty("server1IP");
-        server1Port = Integer.parseInt(properties.getProperty("server1Port"));
+        server1Port = Integer.parseInt(properties.getProperty("server1Port")) + portIncrement;
         server2IP = properties.getProperty("server2IP");
-        server2Port = Integer.parseInt(properties.getProperty("server2Port"));
+        server2Port = Integer.parseInt(properties.getProperty("server2Port")) + portIncrement;
         server3IP = properties.getProperty("server3IP");
         server3Port = Integer.parseInt(properties.getProperty("server3Port"));
         server4IP = properties.getProperty("server4IP");

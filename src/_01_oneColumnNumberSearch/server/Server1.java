@@ -48,6 +48,8 @@ public class Server1 {
     private static ArrayList<Instant> timestamps = new ArrayList<>();
     private static final Logger log = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
+    private static final int portIncrement = 0;
+
 
     // stores port for server
     private static int serverPort;
@@ -218,8 +220,8 @@ public class Server1 {
         numThreads = Integer.parseInt(properties.getProperty("numThreads"));
         numRowsPerThread = numRows / numThreads;
 
-        serverPort = Integer.parseInt(properties.getProperty("serverPort"));
-        combinerPort = Integer.parseInt(properties.getProperty("combinerPort"));
+        serverPort = Integer.parseInt(properties.getProperty("serverPort")) + portIncrement;
+        combinerPort = Integer.parseInt(properties.getProperty("combinerPort")) + portIncrement;
         combinerIP = properties.getProperty("combinerIP");
     }
 

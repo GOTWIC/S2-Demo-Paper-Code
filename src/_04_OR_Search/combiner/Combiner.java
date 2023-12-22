@@ -48,6 +48,8 @@ public class Combiner extends Thread {
     private static final Logger log = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
     private static ArrayList<Instant> timestamps = new ArrayList<>();
 
+    private static final int portIncrement = 30;
+
     // shamir secret share data interpolation
     private static BigInteger langrangesInterpolatation(BigInteger share[]) {
         return switch (share.length) {
@@ -246,9 +248,9 @@ public class Combiner extends Thread {
         numThreads = Integer.parseInt(properties.getProperty("numThreads"));
         numRowsPerThread = numRows / numThreads;
 
-        clientPort = Integer.parseInt(properties.getProperty("clientPort"));
+        clientPort = Integer.parseInt(properties.getProperty("clientPort")) + portIncrement;
         clientIP = properties.getProperty("clientIP");
-        combinerPort = Integer.parseInt(properties.getProperty("combinerPort"));
+        combinerPort = Integer.parseInt(properties.getProperty("combinerPort")) + portIncrement;
     }
 
     /**
