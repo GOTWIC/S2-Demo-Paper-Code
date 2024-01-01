@@ -352,6 +352,15 @@ public class Client05 extends Thread {
             colTypes.add(entry.getValue());
         }
     }
+    
+    private static String calculateSum(){
+        double sum = 0; 
+        int sum_col_idx = colNames.indexOf(sum_col);
+        for(int i = 0; i < resultCombiner.length; i++){
+            sum += resultCombiner[i][sum_col_idx].doubleValue();
+        }
+        return String.valueOf(sum);
+    }
 
     /**
      * This program is used to retrieve the records corresponding to requested row ids based on multiplicative shares.
@@ -373,7 +382,7 @@ public class Client05 extends Thread {
             return Helper.rowFetchResultString(resultCombiner, queryList, resultFileName, colNames, colTypes);
         }
         else{
-            return sum_col;
+            return calculateSum();
         }
     }
 }

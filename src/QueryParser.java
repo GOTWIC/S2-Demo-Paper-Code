@@ -35,6 +35,7 @@ public class QueryParser {
     private static HashMap<String, Integer> columnList = new HashMap<>();
     private static String tableName;
     private static String databaseName;
+    private static int numRows;
     private static int noOfColumns;
 
     // to store query and other information
@@ -207,18 +208,24 @@ LINES TERMINATED BY '\\n'
             query = query.substring(databaseName.length() + 1 + tableName.length()).stripLeading();
         if(query.startsWith(tableName))
             query = query.substring(tableName.length()).stripLeading();
-        if (!query.startsWith("where "))
-            throw new QueryParseExceptions("Invalid query syntax: Missing keyword 'where'.");
+        if (query.startsWith("where "))
+            query = query.substring("where".length()).stripLeading();
 
-        return query.substring("where".length()).stripLeading();
+        return query;
     }
 
     private static void extractPredicates(String query) throws QueryParseExceptions {
         String attribute, value;
         int endIndex;
 
-        if (query.isEmpty() && columnValues.size() > 0)
+        // Not sure what this is for
+        //if (query.isEmpty() && columnValues.size() > 0)
+        //    return;
+
+        if (query.equals("")) {
+            protocol = "NULL";
             return;
+        }
 
         if (!query.contains("=") && columnValues.size() == 0)
             throw new QueryParseExceptions("Unsupported protocol: only '=' is supported");
@@ -353,23 +360,19 @@ LINES TERMINATED BY '\\n'
         } catch (Exception e) {
                 e.printStackTrace();
         }     
-
-        writeResult("Success!");
-
+        System.out.println("Success");
     }
 
-    private static void writeResult(String result){
+    private static void writeResult(){
         try {
             FileWriter writer = new FileWriter("result/prompt.txt");
-            writer.append(result);
+            writer.append("Done");
             writer.flush();
             writer.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    
+    }    
     
     public static void main(String[] args) throws QueryParseExceptions, IOException {
 
@@ -379,12 +382,14 @@ LINES TERMINATED BY '\\n'
 
         if(!query.contains("enc")){
             execute_query(query);
+            writeResult();
             return;
         }
 
         tableName = Helper.getTableName();
         databaseName = Helper.getDatabaseName();
         noOfColumns = Helper.getNoOfColumns();
+        numRows = Helper.getNumRows();
         columnList = Helper.getColumnList();  
 
         query = query.replace("enc ", "");
@@ -393,99 +398,122 @@ LINES TERMINATED BY '\\n'
 
         if(queryType == 0){
             createTable(query);
-            writeResult("Table Created Sucessfully!");
+            System.out.println("Table Created Sucessfully!");
+            writeResult();
+            return;
         }
 
-        else if (queryType == 1){
-            query = basicChecks(query);
-            query = extractprotocolType(query);
-            query = validateTableName(query);
-            extractPredicates(query);
-            String debug = "";
-            debug += columnNames.toString() + "\n";
-            debug += columnValues.toString() + "\n";
-            debug += protocol + "\n";
-            debug += type + "\n";
+        query = basicChecks(query);
+        query = extractprotocolType(query);
+        query = validateTableName(query);
+        extractPredicates(query);
+        String debug = "";
+        debug += columnNames.toString() + "\n";
+        debug += columnValues.toString() + "\n";
+        debug += protocol + "\n";
+        debug += type + "\n";
 
+        String resultRows = "";
 
-            //writeResult(debug);
+        // EXECUTE QUERY PROTOCOLS
+        // All queries have an associated protocol. The result of the protocol is stored in resultRows
+        // Final result is executed based on resultRows
 
-
-            String resultRows = "";
-
-
-            if(type.equals("*") || type.equals("count(*)")){
-                if(protocol.equals("single")){
-                    String[] clientArgs = new String[]{columnNames.get(0) + "," + columnValues.get(0)};
-                    if(columnList.get(columnNames.get(0).toLowerCase()) == 0){
-                        try {
-                            String res = Client01.main(clientArgs);
-                            res = res.replaceAll("\\[", "").replaceAll("\\]", "").replaceAll(" ", "");
-                            resultRows = res;
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    else{
-                        try {
-                            String res = Client02.main(clientArgs);
-                            res = res.replaceAll("\\[", "").replaceAll("\\]", "").replaceAll(" ", "");
-                            resultRows = res;
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-                else if(protocol.equals("and")){
-                    String clientData = "";
-                    for(int i = 0; i < columnNames.size(); i++){
-                        clientData += columnNames.get(i) + "," + columnValues.get(i) + ",";
-                    }
-                    String[] clientArgs = new String[]{clientData};
-                    try {
-                        String res = Client03.main(clientArgs);
-                        res = res.replaceAll("\\[", "").replaceAll("\\]", "").replaceAll(" ", "");
-                        resultRows = res;
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-                else if(protocol.equals("or")){
-                    String clientData = "";
-                    for(int i = 0; i < columnNames.size(); i++){
-                        clientData += columnNames.get(i) + "," + columnValues.get(i) + ",";
-                    }
-                    String[] clientArgs = new String[]{clientData};
-                    try {
-                        String res = Client04.main(clientArgs);
-                        res = res.replaceAll("\\[", "").replaceAll("\\]", "").replaceAll(" ", "");
-                        resultRows = res;
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-            if(type.equals("count(*)")){
-                // count number of values in resultRows
-                String[] resultRowsSplit = resultRows.split(",");
-                writeResult(resultRowsSplit.length + " rows match the query");
-            }
-            if(type.equals("*")){
-
-                if(resultRows == ""){
-                    writeResult("No rows match the query");
-                    return;
-                }
-
-                String[] clientArgs = new String[]{resultRows, "NONE/NULL/??"};
+        if(protocol.equals("single")){
+            String[] clientArgs = new String[]{columnNames.get(0) + "," + columnValues.get(0)};
+            if(columnList.get(columnNames.get(0).toLowerCase()) == 0){
                 try {
-                    String res = Client05.main(clientArgs);
-                    writeResult(res);
+                    String res = Client01.main(clientArgs);
+                    res = res.replaceAll("\\[", "").replaceAll("\\]", "").replaceAll(" ", "");
+                    resultRows = res;
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            else{
+                try {
+                    String res = Client02.main(clientArgs);
+                    res = res.replaceAll("\\[", "").replaceAll("\\]", "").replaceAll(" ", "");
+                    resultRows = res;
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
         }
+        else if(protocol.equals("and")){
+            String clientData = "";
+            for(int i = 0; i < columnNames.size(); i++){
+                clientData += columnNames.get(i) + "," + columnValues.get(i) + ",";
+            }
+            String[] clientArgs = new String[]{clientData};
+            try {
+                String res = Client03.main(clientArgs);
+                res = res.replaceAll("\\[", "").replaceAll("\\]", "").replaceAll(" ", "");
+                resultRows = res;
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        else if(protocol.equals("or")){
+            String clientData = "";
+            for(int i = 0; i < columnNames.size(); i++){
+                clientData += columnNames.get(i) + "," + columnValues.get(i) + ",";
+            }
+            String[] clientArgs = new String[]{clientData};
+            try {
+                String res = Client04.main(clientArgs);
+                res = res.replaceAll("\\[", "").replaceAll("\\]", "").replaceAll(" ", "");
+                resultRows = res;
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        else if(protocol.equals("NULL")){
+            resultRows = "";
+            for(int i = 0; i < numRows; i++){
+                resultRows += String.valueOf(i) + ",";
+            }
+        }
+
+        // EXECUTE QUERY TYPE
+        // Calculates *, count(*), and sum() based on the resultRows from the protocol
+
+        if(resultRows == ""){
+                System.out.println("No rows match the query");
+                writeResult();
+                return;
+        }
+
+        if(type.equals("count(*)")){
+            // count number of values in resultRows
+            String[] resultRowsSplit = resultRows.split(",");
+            System.out.println(resultRowsSplit.length + " rows match the query");
+        }
+
+        else if(type.equals("*")){
+            String[] clientArgs = new String[]{resultRows, "NONE/NULL/??"};
+            try {
+                String res = Client05.main(clientArgs);
+                System.out.println(res);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        else if (type.contains("sum") || type.contains("SUM")){
+            String sum_col = "";
+
+            sum_col = type.substring("sum(".length(), type.length() - 1);
+
+            String[] clientArgs = new String[]{resultRows, sum_col};
+            try {
+                String res = Client05.main(clientArgs);
+                System.out.println(res);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        writeResult();
     }
 }

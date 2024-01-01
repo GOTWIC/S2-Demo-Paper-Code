@@ -559,6 +559,11 @@ public class Helper {
         return properties.getProperty("dbName");
     }
 
+    public static int getNumRows(){
+        Properties properties = readPropertiesFile(mainDir + "config/userinfo.properties");
+        return Integer.valueOf(properties.getProperty("numRows"));
+    }
+
     public static int getNoOfColumns(){
         return noOfColumns;
     }

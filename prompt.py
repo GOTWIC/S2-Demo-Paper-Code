@@ -46,6 +46,16 @@ def run_scripts():
 
         Popen("java -cp \"" + classPath + "\" src/" + folderNames[i] + "/combiner/Combiner > prompt_logs/comb" + str(i)  + ".txt", shell = False)
 
+def getRowCount(req):
+        f = open("config/encryptedSchemas.properties", "r")
+        contents = f.read()
+        for line in contents.split("\n"):
+            if req.lower() in line.lower():
+                f.close()
+                return line.split(".")[2]
+        f.close()
+        return -1
+
 compile_scripts()
 run_scripts()
 
@@ -65,22 +75,36 @@ while True:
 
         if "enc create table" in query:
                # get the db and table name
-                temp = query.replace("enc create table from ", "").split(" ")[0].split(".")
+                names = query.replace("enc create table from ", "").split(" ")[0].split(".")
+
+                # get numRows
+                numRows = query.replace("enc create table from ", "").split(" ")[1]
 
                 # set the db and table name in config/userinfo.properties
                 f = open("config/userinfo.properties", "w")
-                f.write(f"dbName={temp[0]}\n")
-                f.write(f"tableName={temp[1]}\n")
+                f.write(f"dbName={names[0]}\n")
+                f.write(f"tableName={names[1]}\n")
+                f.write(f"numRows={numRows}\n")
+                f.close()
+
+                # append all info in config/encryptedSchemas.properties
+                f = open("config/encryptedSchemas.properties", "a")
+                f.write(f"{names[0]}.{names[1]}.{numRows}\n")
                 f.close()
         
         if "enc use" in query:
                 # get the db and table name
-                temp = query.replace("enc use ", "").split(".")
+                names = query.replace("enc use ", "").split(".")
+
+                if getRowCount(names) == -1:
+                    print("The requested schema/table has not yet been encrypted. Please encrypt it first.")
+                    continue
 
                 # set the db and table name in config/userinfo.properties
                 f = open("config/userinfo.properties", "w")
-                f.write(f"dbName={temp[0]}\n")
-                f.write(f"tableName={temp[1]}\n")
+                f.write(f"dbName={names[0]}\n")
+                f.write(f"tableName={names[1]}\n")
+                f.write(f"numRows={int(getRowCount(names))}\n")
                 f.close()
 
         if "\"" in query:
@@ -88,11 +112,11 @@ while True:
 
         Popen("java -cp \"" + classPath + f"\" src/QueryParser \"{query}\" > prompt_logs/client.txt")
         
+        # Check for finish flag from the query parser
         while True:
                 f = open("result/prompt.txt", "r")
                 contents = f.read()
                 if contents != "":
-                        print(contents)
                         f.close()
                         break
                 f.close()
