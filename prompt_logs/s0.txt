@@ -1,11 +1,11 @@
 Server1 Listening........
-Row Val: 409546 prgServer: 2 prgClient: 3 addShare1: 3 result: 819089
-Row Val: 661222 prgServer: 7 prgClient: 3 addShare1: 3 result: 4628536
-Row Val: 578422 prgServer: 2 prgClient: 9 addShare1: 3 result: 1156847
-Row Val: 488004 prgServer: 4 prgClient: 8 addShare1: 3 result: 1952012
-Server1 Result: [819089, 4628536, 1156847, 1952012]
 Row Val: 409546 prgServer: 2 prgClient: 3 addShare1: 6 result: 819083
 Row Val: 661222 prgServer: 7 prgClient: 3 addShare1: 6 result: 4628515
 Row Val: 578422 prgServer: 2 prgClient: 9 addShare1: 6 result: 1156841
 Row Val: 488004 prgServer: 4 prgClient: 8 addShare1: 6 result: 1952000
 Server1 Result: [819083, 4628515, 1156841, 1952000]
+Row Val: 409546 prgServer: 2 prgClient: 3 addShare1: 2 result: 819091
+Row Val: 661222 prgServer: 7 prgClient: 3 addShare1: 2 result: 4628543
+Row Val: 578422 prgServer: 2 prgClient: 9 addShare1: 2 result: 1156849
+Row Val: 488004 prgServer: 4 prgClient: 8 addShare1: 2 result: 1952016
+Server1 Result: [819091, 4628543, 1156849, 1952016]

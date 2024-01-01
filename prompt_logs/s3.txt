@@ -14,7 +14,7 @@ val: -804150 temp: 16057717 hashmapvalue: 3418801
 val: -701284 temp: 59074635 hashmapvalue: 79507
 val: -534388 temp: 70991293 hashmapvalue: 1849
 val: -467425 temp: 50892018 hashmapvalue: 43
-prgServer: 2 fingerprint: 79595875 result: 42592293
+prgServer: 2 fingerprint: 28832597 result: 44118842
 
 ------------------------------------------
 
@@ -33,7 +33,7 @@ val: -231791 temp: 25437187 hashmapvalue: 3418801
 val: -627686 temp: 20009878 hashmapvalue: 79507
 val: -469959 temp: 51055750 hashmapvalue: 1849
 val: -856533 temp: 14224831 hashmapvalue: 43
-prgServer: 7 fingerprint: 79595875 result: 42402727
+prgServer: 7 fingerprint: 28832597 result: 97745652
 
 ------------------------------------------
 
@@ -52,7 +52,7 @@ val: -361217 temp: 6859942 hashmapvalue: 3418801
 val: -208453 temp: 33388433 hashmapvalue: 79507
 val: -149260 temp: 57406714 hashmapvalue: 1849
 val: -116283 temp: 52406545 hashmapvalue: 43
-prgServer: 2 fingerprint: 79595875 result: 45621347
+prgServer: 2 fingerprint: 28832597 result: 47147896
 
 ------------------------------------------
 
@@ -71,7 +71,7 @@ val: -152022 temp: 48745457 hashmapvalue: 3418801
 val: -465743 temp: 18919346 hashmapvalue: 79507
 val: -303192 temp: 58317380 hashmapvalue: 1849
 val: -947808 temp: 17561636 hashmapvalue: 43
-prgServer: 4 fingerprint: 79595875 result: 51863065
+prgServer: 4 fingerprint: 28832597 result: 54916163
 
 ------------------------------------------
 
@@ -90,7 +90,7 @@ val: -986565 temp: 56381987 hashmapvalue: 3418801
 val: -860661 temp: 27812648 hashmapvalue: 79507
 val: -218892 temp: 23081368 hashmapvalue: 1849
 val: -441820 temp: 4083108 hashmapvalue: 43
-prgServer: 2 fingerprint: 93381613 result: 21403004
+prgServer: 2 fingerprint: 36481123 result: 35203977
 
 ------------------------------------------
 
@@ -109,7 +109,7 @@ val: -399441 temp: 9490104 hashmapvalue: 3418801
 val: -945887 temp: 4857659 hashmapvalue: 79507
 val: -355033 temp: 48401691 hashmapvalue: 1849
 val: -905954 temp: 9445669 hashmapvalue: 43
-prgServer: 7 fingerprint: 93381613 result: 12448434
+prgServer: 7 fingerprint: 36481123 result: 10751836
 
 ------------------------------------------
 
@@ -128,7 +128,7 @@ val: -516083 temp: 21107867 hashmapvalue: 3418801
 val: -179146 temp: 77747846 hashmapvalue: 79507
 val: -482224 temp: 86115733 hashmapvalue: 1849
 val: -892353 temp: 47744554 hashmapvalue: 43
-prgServer: 2 fingerprint: 93381613 result: 8725889
+prgServer: 2 fingerprint: 36481123 result: 22526862
 
 ------------------------------------------
 
@@ -147,7 +147,7 @@ val: -38531 temp: 84323577 hashmapvalue: 3418801
 val: -893794 temp: 21448989 hashmapvalue: 79507
 val: -398491 temp: 84639186 hashmapvalue: 1849
 val: -666951 temp: 55960293 hashmapvalue: 43
-prgServer: 4 fingerprint: 93381613 result: 50314734
+prgServer: 4 fingerprint: 36481123 result: 77916680
 
 ------------------------------------------
 

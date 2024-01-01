@@ -1,4 +1,1 @@
-color     year     model     
-black     2022     aventador
-green     2020     huracan  
-black     2017     terzo    
+3 rows match the query

@@ -1,9 +1,9 @@
 Combiner Listening........
-result[0]:3 = server1[0]:99180921 + server2[0]:819089
-result[1]:99999982 = server1[1]:95371446 + server2[1]:4628536
-result[2]:5 = server1[2]:98843165 + server2[2]:1156847
-result[3]:99999995 = server1[3]:98047983 + server2[3]:1952012
-result[0]:13 = server1[0]:99180937 + server2[0]:819083
-result[1]:10 = server1[1]:95371502 + server2[1]:4628515
-result[2]:15 = server1[2]:98843181 + server2[2]:1156841
-result[3]:8 = server1[3]:98048015 + server2[3]:1952000
+result[0]:3 = server1[0]:819083 + server2[0]:99180927
+result[1]:99999982 = server1[1]:4628515 + server2[1]:95371467
+result[2]:5 = server1[2]:1156841 + server2[2]:98843171
+result[3]:99999995 = server1[3]:1952000 + server2[3]:98047995
+result[0]:13 = server1[0]:819091 + server2[0]:99180929
+result[1]:10 = server1[1]:4628543 + server2[1]:95371474
+result[2]:15 = server1[2]:1156849 + server2[2]:98843173
+result[3]:8 = server1[3]:1952016 + server2[3]:98047999

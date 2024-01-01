@@ -14,7 +14,7 @@ val: 804260 temp: 97942647 hashmapvalue: 3418801
 val: 701385 temp: 62955936 hashmapvalue: 79507
 val: 534506 temp: 51257460 hashmapvalue: 1849
 val: 467522 temp: 71360906 hashmapvalue: 43
-prgServer: 2 prgClient: 3 fingerprint: 42657049 result: 57407717
+prgServer: 2 prgClient: 3 fingerprint: 93420327 result: 55881168
 
 ------------------------------------------
 
@@ -33,7 +33,7 @@ val: 231906 temp: 45921111 hashmapvalue: 3418801
 val: 627803 temp: 60650739 hashmapvalue: 79507
 val: 470073 temp: 29815653 hashmapvalue: 1849
 val: 856650 temp: 66651603 hashmapvalue: 43
-prgServer: 7 prgClient: 3 fingerprint: 42657049 result: 67961874
+prgServer: 7 prgClient: 3 fingerprint: 93420327 result: 12618949
 
 ------------------------------------------
 
@@ -52,7 +52,7 @@ val: 361314 temp: 97940587 hashmapvalue: 3418801
 val: 208567 temp: 80475894 hashmapvalue: 79507
 val: 149377 temp: 56673946 hashmapvalue: 1849
 val: 116387 temp: 61678587 hashmapvalue: 43
-prgServer: 2 prgClient: 9 fingerprint: 42657049 result: 38043085
+prgServer: 2 prgClient: 9 fingerprint: 93420327 result: 36516536
 
 ------------------------------------------
 
@@ -71,7 +71,7 @@ val: 152144 temp: 3056199 hashmapvalue: 3418801
 val: 465857 temp: 41946108 hashmapvalue: 79507
 val: 303293 temp: 2734823 hashmapvalue: 1849
 val: 947924 temp: 43495555 hashmapvalue: 43
-prgServer: 4 prgClient: 8 fingerprint: 42657049 result: 3354032
+prgServer: 4 prgClient: 8 fingerprint: 93420327 result: 300934
 
 ------------------------------------------
 
@@ -90,7 +90,7 @@ val: 986664 temp: 28753523 hashmapvalue: 3418801
 val: 860758 temp: 65035041 hashmapvalue: 79507
 val: 219000 temp: 69966013 hashmapvalue: 1849
 val: 441918 temp: 88968487 hashmapvalue: 43
-prgServer: 2 prgClient: 3 fingerprint: 99669989 result: 78597006
+prgServer: 2 prgClient: 3 fingerprint: 56570472 result: 64796033
 
 ------------------------------------------
 
@@ -109,7 +109,7 @@ val: 399549 temp: 95354621 hashmapvalue: 3418801
 val: 945995 temp: 8573815 hashmapvalue: 79507
 val: 355134 temp: 65216539 hashmapvalue: 1849
 val: 906075 temp: 4177757 hashmapvalue: 43
-prgServer: 7 prgClient: 3 fingerprint: 99669989 result: 31554428
+prgServer: 7 prgClient: 3 fingerprint: 56570472 result: 33251026
 
 ------------------------------------------
 
@@ -128,7 +128,7 @@ val: 516184 temp: 11890539 hashmapvalue: 3418801
 val: 179247 temp: 63280774 hashmapvalue: 79507
 val: 482338 temp: 55123673 hashmapvalue: 1849
 val: 892456 temp: 93499281 hashmapvalue: 43
-prgServer: 2 prgClient: 9 fingerprint: 99669989 result: 87658600
+prgServer: 2 prgClient: 9 fingerprint: 56570472 result: 73857627
 
 ------------------------------------------
 
@@ -147,7 +147,7 @@ val: 38630 temp: 811933 hashmapvalue: 3418801
 val: 893891 temp: 71398700 hashmapvalue: 79507
 val: 398599 temp: 8408195 hashmapvalue: 1849
 val: 667049 temp: 37091302 hashmapvalue: 43
-prgServer: 4 prgClient: 8 fingerprint: 99669989 result: 49685281
+prgServer: 4 prgClient: 8 fingerprint: 56570472 result: 22083335
 
 ------------------------------------------
 
