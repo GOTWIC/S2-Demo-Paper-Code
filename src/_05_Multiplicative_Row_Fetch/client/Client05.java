@@ -81,6 +81,8 @@ public class Client05 extends Thread {
 
     private static final int portIncrement = 40;
 
+    private static String sum_col = "def";
+
 
     // default constructor
     private Client05() {
@@ -279,6 +281,7 @@ public class Client05 extends Thread {
      */
     private static void doPreWork(String[] args) {
         String query = args[0];
+        sum_col = args[1];
 
         // splitting the argument value to extract row ids to be searched
         queryList = Stream.of(query.split(","))
@@ -366,7 +369,12 @@ public class Client05 extends Thread {
 
         doPostWork();
 
-        return Helper.rowFetchResultString(resultCombiner, queryList, resultFileName, colNames, colTypes);
+        if(sum_col.equals("NONE/NULL/??")){
+            return Helper.rowFetchResultString(resultCombiner, queryList, resultFileName, colNames, colTypes);
+        }
+        else{
+            return sum_col;
+        }
     }
 }
 

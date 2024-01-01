@@ -187,7 +187,7 @@ public class Combiner extends Thread {
 
         try {
             ServerSocket ss = new ServerSocket(combinerPort);
-            System.out.println("Combiner Listening........");
+            //System.out.println("Combiner Listening........");
 
             while (true) {
                 // reading data from the server

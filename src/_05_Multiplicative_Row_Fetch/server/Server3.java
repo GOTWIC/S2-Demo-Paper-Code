@@ -233,7 +233,7 @@ public class Server3 {
 
         try {
             ServerSocket ss = new ServerSocket(serverPort);
-            System.out.println("Server3 Listening........");
+            //System.out.println("Server3 Listening........");
 
             do {
                 // listening over socket for connections

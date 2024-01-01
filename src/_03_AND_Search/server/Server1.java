@@ -97,8 +97,8 @@ public class Server1 {
 
                 String columns = Helper.strArrToStr(columnNameCopy);
 
-                System.out.println(columns);
-                System.out.println("\n");
+                //System.out.println(columns);
+                //System.out.println("\n");
 
 
                 String query = query_base1 + columns + query_base2 + startRow + " LIMIT " + numRowsPerThread;
@@ -230,7 +230,7 @@ public class Server1 {
 
         try {
             ServerSocket ss = new ServerSocket(serverPort);
-            System.out.println("Server1 Listening........");
+            //System.out.println("Server1 Listening........");
 
             do {
                 // listening over socket for connections

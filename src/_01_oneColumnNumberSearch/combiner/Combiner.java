@@ -63,7 +63,7 @@ public class Combiner extends Thread {
             // adding data received from the server
             for (int i = startRow; i < endRow; i++) {
                 result[i] = (int) Helper.mod((long) server1[i] + (long) server2[i]);
-                System.out.println("result[" + i + "]:" + result[i] + " = server1[" + i + "]:" + server1[i] + " + server2[" + i + "]:" + server2[i]);
+                //System.out.println("result[" + i + "]:" + result[i] + " = server1[" + i + "]:" + server1[i] + " + server2[" + i + "]:" + server2[i]);
             }
         }
     }
@@ -137,7 +137,7 @@ public class Combiner extends Thread {
 
         try {
             ServerSocket ss = new ServerSocket(combinerPort);
-            System.out.println("Combiner Listening........");
+            //System.out.println("Combiner Listening........");
 
             while (true) {
                 // listening over the socket for connections

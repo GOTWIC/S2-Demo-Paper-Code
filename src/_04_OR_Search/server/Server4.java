@@ -209,7 +209,7 @@ public class Server4 {
 
         try {
             ServerSocket ss = new ServerSocket(serverPort);
-            System.out.println("Server4 Listening........");
+            //System.out.println("Server4 Listening........");
 
             do {
                 // listening over socket for connections

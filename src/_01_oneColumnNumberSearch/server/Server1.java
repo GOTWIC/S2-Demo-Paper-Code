@@ -102,8 +102,8 @@ public class Server1 {
                     result[i] = (int) Helper.mod(Helper.mod((rs.getLong(columnName) - addShare1) *
                             prgServer) + prgClient);
 
-                    System.out.println("Row Val: " + rs.getLong(columnName) + " prgServer: " + prgServer + " prgClient: " + prgClient
-                            + " addShare1: " + addShare1 + " result: " + result[i]);
+                    //System.out.println("Row Val: " + rs.getLong(columnName) + " prgServer: " + prgServer + " prgClient: " + prgClient
+                    //        + " addShare1: " + addShare1 + " result: " + result[i]);
                 }
             } catch (SQLException ex) {
                 log.log(Level.SEVERE, ex.getMessage());
@@ -170,7 +170,7 @@ public class Server1 {
                 combinerSocket = new Socket(combinerIP, combinerPort);
                 outToCombiner = new ObjectOutputStream(combinerSocket.getOutputStream());
                 // Print result
-                System.out.println("Server1 Result: " + Arrays.toString(result));
+                //System.out.println("Server1 Result: " + Arrays.toString(result));
                 outToCombiner.writeObject(result);
                 combinerSocket.close();
 
@@ -190,7 +190,7 @@ public class Server1 {
 
         try {
             ServerSocket ss = new ServerSocket(serverPort);
-            System.out.println("Server1 Listening........");
+            //System.out.println("Server1 Listening........");
 
             do {
                 // listening over socket for connections

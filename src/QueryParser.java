@@ -408,6 +408,9 @@ LINES TERMINATED BY '\\n'
             debug += type + "\n";
 
 
+            //writeResult(debug);
+
+
             String resultRows = "";
 
 
@@ -475,7 +478,7 @@ LINES TERMINATED BY '\\n'
                     return;
                 }
 
-                String[] clientArgs = new String[]{resultRows};
+                String[] clientArgs = new String[]{resultRows, "NONE/NULL/??"};
                 try {
                     String res = Client05.main(clientArgs);
                     writeResult(res);

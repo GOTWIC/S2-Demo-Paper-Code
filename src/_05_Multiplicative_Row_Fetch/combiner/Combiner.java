@@ -88,7 +88,7 @@ public class Combiner extends Thread {
         BigInteger[] share;
         for (int i = 0; i < querySize; i++) {
 
-            //System.out.println("Server Length 2: " + server1[0].length);
+            ////System.out.println("Server Length 2: " + server1[0].length);
 
             for(int j = 0; j < server1[0].length; j++){
                 share = new BigInteger[]{server1[i][j], server2[i][j], server3[i][j], server4[i][j]};
@@ -145,7 +145,7 @@ public class Combiner extends Thread {
 
         try {
             ServerSocket ss = new ServerSocket(combinerPort);
-            System.out.println("Combiner Listening........");
+            //System.out.println("Combiner Listening........");
 
             while (true) {
                 // reading data from the server

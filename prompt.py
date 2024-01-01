@@ -41,10 +41,10 @@ def run_scripts():
 
     for i in range(len(serverCounts)):
         for j in range(serverCounts[i]):
-            Popen("java -cp \"" + classPath + "\" src/" + folderNames[i] + "/server/Server" + str(j+1) + " > prompt_logs/s" + str(serverCounter) + ".txt", shell = True)
+            Popen("java -cp \"" + classPath + "\" src/" + folderNames[i] + "/server/Server" + str(j+1) + " > prompt_logs/s" + str(serverCounter) + ".txt", shell = False)
             serverCounter += 1
 
-        Popen("java -cp \"" + classPath + "\" src/" + folderNames[i] + "/combiner/Combiner > prompt_logs/comb" + str(i)  + ".txt", shell = True)
+        Popen("java -cp \"" + classPath + "\" src/" + folderNames[i] + "/combiner/Combiner > prompt_logs/comb" + str(i)  + ".txt", shell = False)
 
 compile_scripts()
 run_scripts()

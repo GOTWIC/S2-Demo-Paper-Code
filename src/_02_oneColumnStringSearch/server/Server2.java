@@ -99,11 +99,11 @@ public class Server2 {
                             hashMap.put(j + 1, Helper.mod((long) Math.pow(fingerprintPrimeNumber, j + 1)));
                         }
                         temp = Helper.mod(temp + Helper.mod(hashMap.get(j + 1) * Integer.parseInt(rowSplit[j])));
-                        System.out.println("val: " + rowSplit[j] +  " temp: " + temp + " hashmapvalue: " + hashMap.get(j + 1));
+                        //System.out.println("val: " + rowSplit[j] +  " temp: " + temp + " hashmapvalue: " + hashMap.get(j + 1));
                     }
                     result[i] = (int) Helper.mod((temp - fingerprint2) * prgServer);
-                    System.out.println("prgServer: " + prgServer + " fingerprint: " + fingerprint2 + " result: " + result[i]);
-                    System.out.println("\n------------------------------------------\n");
+                    //System.out.println("prgServer: " + prgServer + " fingerprint: " + fingerprint2 + " result: " + result[i]);
+                    //System.out.println("\n------------------------------------------\n");
                 }
             } catch (SQLException ex) {
                 log.log(Level.SEVERE, ex.getMessage());
@@ -187,7 +187,7 @@ public class Server2 {
 
         try {
             ServerSocket ss = new ServerSocket(serverPort);
-            System.out.println("Server2 Listening........");
+            //System.out.println("Server2 Listening........");
 
             do {
                 // listening over socket for connections

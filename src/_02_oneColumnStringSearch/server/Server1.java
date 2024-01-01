@@ -110,11 +110,11 @@ public class Server1 {
                         temp = Helper.mod(temp + Helper.mod(hashMap.get(j + 1)
                                 * Integer.parseInt(rowSplit[j])));
 
-                        System.out.println("val: " + rowSplit[j] +  " temp: " + temp + " hashmapvalue: " + hashMap.get(j + 1));
+                        //System.out.println("val: " + rowSplit[j] +  " temp: " + temp + " hashmapvalue: " + hashMap.get(j + 1));
                     }
                     result[i] = (int) Helper.mod(Helper.mod((temp - fingerprint1) * prgServer) + prgClient);
-                    System.out.println("prgServer: " + prgServer + " prgClient: " + prgClient + " fingerprint: " + fingerprint1 + " result: " + result[i]);
-                    System.out.println("\n------------------------------------------\n");
+                    //System.out.println("prgServer: " + prgServer + " prgClient: " + prgClient + " fingerprint: " + fingerprint1 + " result: " + result[i]);
+                    //System.out.println("\n------------------------------------------\n");
                 }
             } catch (SQLException ex) {
                 log.log(Level.SEVERE, ex.getMessage());
@@ -199,7 +199,7 @@ public class Server1 {
 
         try {
             ServerSocket ss = new ServerSocket(serverPort);
-            System.out.println("Server1 Listening........");
+            //System.out.println("Server1 Listening........");
 
             do {
                 // listening over socket for connections
