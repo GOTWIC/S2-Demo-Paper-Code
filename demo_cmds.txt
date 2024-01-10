@@ -6,7 +6,7 @@ create schema mygarage
 
 create table mygarage.lamborghini (MODEL varchar(255), YEAR int, COLOR varchar(255))
 
-insert into mygarage.lamborghini values ("aventador",2022,"black"),("urus",2018,"yellow"),("huracan",2020,"green"),("terzo",2017,"black")
+insert into mygarage.lamborghini values ('aventador',2022,'black'),('urus',2018,'yellow'),('huracan',2020,'green'),('terzo',2017,'black'),('murci','2004','white')
 
 enc create table from mygarage.lamborghini 4
 

@@ -228,8 +228,8 @@ LINES TERMINATED BY '\\n'
             return;
         }
 
-        if (!query.contains("=") && columnValues.size() == 0)
-            throw new QueryParseExceptions("Unsupported protocol: only '=' is supported");
+        //if (!query.contains("=") && columnValues.size() == 0)
+        //    throw new QueryParseExceptions("Unsupported protocol: only '=' is supported");
 
         // Restore original query to preserve case
         query = origQuery.substring(origQuery.indexOf("where") + "where".length()).stripLeading();
@@ -408,19 +408,26 @@ LINES TERMINATED BY '\\n'
             return;
         }
 
-        query = basicChecks(query);
-        query = extractprotocolType(query); // Might have some case issues, check later
-        query = validateTableName(query);
-        extractPredicates(query);
-        String debug = "";
-        debug += columnNames.toString() + "\n";
-        debug += columnValues.toString() + "\n";
-        debug += protocol + "\n";
-        debug += type + "\n";
-
-        //System.out.println(debug);
-
-        System.out.println(query); // query should maintain original case
+        if(query.equals("select * from " + databaseName + "." + tableName + ";")){
+            protocol = "NULL";
+            type = "*";
+        }
+        else if(query.equals("select count(*) from " + databaseName + "." + tableName + ";")){
+            protocol = "NULL";
+            type = "count(*)";
+        }
+        else{
+            query = basicChecks(query);
+            query = extractprotocolType(query); // Might have some case issues, check later
+            query = validateTableName(query);
+            extractPredicates(query);
+            String debug = "";
+            debug += columnNames.toString() + "\n";
+            debug += columnValues.toString() + "\n";
+            debug += protocol + "\n";
+            debug += type + "\n";
+            //System.out.println(debug);
+        }
 
         String resultRows = "";
 
@@ -480,7 +487,7 @@ LINES TERMINATED BY '\\n'
         else if(protocol.equals("NULL")){
             resultRows = "";
             for(int i = 0; i < numRows; i++){
-                resultRows += String.valueOf(i) + ",";
+                resultRows += String.valueOf(i+1) + ",";
             }
         }
 

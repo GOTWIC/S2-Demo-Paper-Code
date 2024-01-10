@@ -246,7 +246,7 @@ public class Client05 extends Thread {
     private static void doWork() {
 
         // evaluating the row and column filter based on items to be searched
-        int filter_size = (int) Math.sqrt(numRows);
+        int filter_size = (int) (Math.ceil(Math.sqrt(numRows))); 
         for (int i = 0; i < querySize; i++) {
             row_filter[i][queryList[i] / filter_size] = BigInteger.valueOf(1);
             col_filter[i][queryList[i] % filter_size] = BigInteger.valueOf(1);
@@ -309,7 +309,7 @@ public class Client05 extends Thread {
         server4IP = properties.getProperty("server4IP");
         server4Port = Integer.parseInt(properties.getProperty("server4Port")) + portIncrement;
 
-        int filter_size = (int) Math.sqrt(numRows);
+        int filter_size = (int) (Math.ceil(Math.sqrt(numRows))); 
         row_filter = new BigInteger[querySize][filter_size];
         col_filter = new BigInteger[querySize][filter_size];
 

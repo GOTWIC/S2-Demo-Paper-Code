@@ -96,12 +96,18 @@ public class Server1 {
 
                 // performing server operation on each row of the database
                 for (int i = startRow; i < endRow; i++) {
-                    rs.next();
+                    String st_val = "";
+                    if(i < numRows)
+                        rs.next();
                     // multiplication with the row filter for each column value
                     for (int j = 0; j < querySize; j++) {
                         BigInteger temp = BigInteger.valueOf(row_filter[j][i / filter_size]);
                         for(int k = 0; k < numCols; k++){
-                            col_sum[k][j][threadNum - 1][i % filter_size] = Helper.mod(col_sum[k][j][threadNum - 1][i % filter_size].add(Helper.mod(new BigInteger(rs.getString(columnNamesArr[k]))).multiply(temp)));
+                            if(i < numRows)
+                                st_val = rs.getString(columnNamesArr[k]);
+                            else
+                                st_val = "0";
+                            col_sum[k][j][threadNum - 1][i % filter_size] = Helper.mod(col_sum[k][j][threadNum - 1][i % filter_size].add(Helper.mod(new BigInteger(st_val)).multiply(temp)));
                         }
                     }
                 }
@@ -259,13 +265,15 @@ public class Server1 {
 
         numRows = Integer.parseInt(properties.getProperty("numRows"));
         numThreads = Integer.parseInt(properties.getProperty("numThreads"));
-        numRowsPerThread = numRows / numThreads;
+        // phantom rows includes padding
+        int numRowsPhantom = (int) Math.pow((int) Math.ceil(Math.sqrt(numRows)), 2); 
+        numRowsPerThread = numRowsPhantom / numThreads;
 
         serverPort = Integer.parseInt(properties.getProperty("serverPort")) + portIncrement;
         combinerPort = Integer.parseInt(properties.getProperty("combinerPort")) + portIncrement;
         combinerIP = properties.getProperty("combinerIP");
 
-        filter_size = (int) Math.sqrt(numRows);
+        filter_size = (int) Math.ceil(Math.sqrt(numRows));
 
         setEnv();
     }

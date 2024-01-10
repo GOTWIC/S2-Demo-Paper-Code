@@ -115,8 +115,8 @@ while True:
 
                 updateConfigFiles(names[0],names[1],getRowCount(names))
 
-        if "'" in query:
-                query = query.replace("'", "'\\\"'")
+        #if "'" in query:
+            #query = query.replace("'", "'\\\"'")
 
         Popen("java -cp \"" + classPath + f"\" src/QueryParser \"{query}\" > prompt_logs/client.txt")
         
