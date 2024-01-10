@@ -19,6 +19,7 @@ import java.sql.Statement;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class QueryParser {
 
@@ -241,11 +242,7 @@ LINES TERMINATED BY '\\n'
         else
             protocol = "single";
 
-        System.out.println(query);
-
         query = query.replaceAll(" and ", ",").replaceAll(" or ", ",").replaceAll(" AND ", ",").replaceAll(" OR ", ",").replaceAll(" ","").replaceAll(";", "");
-
-        System.out.println(query);
 
 
         String[] predicates = query.split(",");
@@ -377,9 +374,14 @@ LINES TERMINATED BY '\\n'
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }    
+    } 
     
-    public static void main(String[] args) throws QueryParseExceptions, IOException {
+    private static String removeDuplicates(String input) {
+        Set<String> uniqueNumbers = new LinkedHashSet<>(Arrays.asList(input.split(",")));
+        return uniqueNumbers.stream().collect(Collectors.joining(","));
+    }
+    
+    public static void main(String[] args) throws QueryParseExceptions, IOException, InterruptedException {
 
         String query = args[0];
         origQuery = query;
@@ -471,18 +473,25 @@ LINES TERMINATED BY '\\n'
             }
         }
         else if(protocol.equals("or")){
-            String clientData = "";
-            for(int i = 0; i < columnNames.size(); i++){
-                clientData += columnNames.get(i) + "," + columnValues.get(i) + ",";
-            }
-            String[] clientArgs = new String[]{clientData};
-            try {
-                String res = Client04.main(clientArgs);
-                res = res.replaceAll("\\[", "").replaceAll("\\]", "").replaceAll(" ", "");
-                resultRows = res;
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            for(int num_executions = 0; num_executions < (int) Math.ceil((double)columnNames.size() / 2); num_executions++){
+                String clientData = "";
+                int upper_limit = Math.min(columnNames.size(), num_executions * 2 + 2);
+                for(int i = num_executions * 2; i < upper_limit; i++){
+                    clientData += columnNames.get(i) + "," + columnValues.get(i) + ",";
+                }
+                String[] clientArgs = new String[]{clientData};
+                try {
+                    Client04 client = new Client04();
+                    String res = client.main(clientArgs);
+                    res = res.replaceAll("\\[", "").replaceAll("\\]", "").replaceAll(" ", "");
+                    resultRows += res + ",";
+                    client = null;
+                    System.gc();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                Thread.sleep(100);
+            }            
         }
         else if(protocol.equals("NULL")){
             resultRows = "";
@@ -490,6 +499,9 @@ LINES TERMINATED BY '\\n'
                 resultRows += String.valueOf(i+1) + ",";
             }
         }
+
+        resultRows = removeDuplicates(resultRows);
+        //System.out.println(resultRows);
 
         // EXECUTE QUERY TYPE
         // Calculates *, count(*), and sum() based on the resultRows from the protocol
