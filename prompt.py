@@ -1,5 +1,6 @@
 from subprocess import Popen
 import time
+from configobj import ConfigObj
 
 basePath = "C:/Users/shoum/Documents/VLDBPaperDemo/S2-VLDB-2023-main"
 classPath = basePath + ";" + basePath + "/mysqlConnector/mysql-connector-java-8.0.29.jar"
@@ -43,7 +44,6 @@ def run_scripts():
         for j in range(serverCounts[i]):
             Popen("java -cp \"" + classPath + "\" src/" + folderNames[i] + "/server/Server" + str(j+1) + " > prompt_logs/s" + str(serverCounter) + ".txt", shell = False)
             serverCounter += 1
-
         Popen("java -cp \"" + classPath + "\" src/" + folderNames[i] + "/combiner/Combiner > prompt_logs/comb" + str(i)  + ".txt", shell = False)
 
 def getRowCount(req):
@@ -55,6 +55,24 @@ def getRowCount(req):
                 return line.split(".")[2]
         f.close()
         return -1
+
+def updateConfigFiles(db,tbl,r):
+      # set the db and table name in config/userinfo.properties
+    f = open("config/userinfo.properties", "w")
+    f.write(f"dbName={db}\n")
+    f.write(f"tableName={tbl}\n")
+    f.write(f"numRows={r}\n")
+    f.close()
+
+    # update the config files
+    config_files = ['Client', 'Combiner', 'Server1', 'Server2', 'Server3', 'Server4']
+    for config_file in config_files:
+        config = ConfigObj(f"config/{config_file}.properties")
+        config['numRows'] = r
+        config.write()  
+        #f = open(f"config/{config_file}.properties", "w")
+        #f.write(f"numRows={r}\n")
+        #f.close()
 
 compile_scripts()
 run_scripts()
@@ -80,12 +98,7 @@ while True:
                 # get numRows
                 numRows = query.replace("enc create table from ", "").split(" ")[1]
 
-                # set the db and table name in config/userinfo.properties
-                f = open("config/userinfo.properties", "w")
-                f.write(f"dbName={names[0]}\n")
-                f.write(f"tableName={names[1]}\n")
-                f.write(f"numRows={numRows}\n")
-                f.close()
+                updateConfigFiles(names[0],names[1],numRows)
 
                 # append all info in config/encryptedSchemas.properties
                 f = open("config/encryptedSchemas.properties", "a")
@@ -100,15 +113,10 @@ while True:
                     print("The requested schema/table has not yet been encrypted. Please encrypt it first.")
                     continue
 
-                # set the db and table name in config/userinfo.properties
-                f = open("config/userinfo.properties", "w")
-                f.write(f"dbName={names[0]}\n")
-                f.write(f"tableName={names[1]}\n")
-                f.write(f"numRows={int(getRowCount(names))}\n")
-                f.close()
+                updateConfigFiles(names[0],names[1],getRowCount(names))
 
-        if "\"" in query:
-                query = query.replace("\"", "\\\"")
+        if "'" in query:
+                query = query.replace("'", "'\\\"'")
 
         Popen("java -cp \"" + classPath + f"\" src/QueryParser \"{query}\" > prompt_logs/client.txt")
         

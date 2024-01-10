@@ -280,6 +280,7 @@ public class Client05 extends Thread {
      * @param args takes as string a list of row ids e.g. "1,2,5,6"
      */
     private static void doPreWork(String[] args) {
+
         String query = args[0];
         sum_col = args[1];
 

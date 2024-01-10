@@ -457,7 +457,7 @@ public class Database_Table_Creator {
                     col_type = 1;
                 else if (col_type_str.contains("date"))
                     col_type = 2;
-                tableMetadata.put(rs.getString("Field"), col_type);
+                tableMetadata.put(rs.getString("Field").toLowerCase(), col_type);
             }
         } catch (Exception e) {
             e.printStackTrace();

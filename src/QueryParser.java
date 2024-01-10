@@ -55,18 +55,19 @@ public class QueryParser {
     private static void createTable(String query) throws QueryParseExceptions, IOException{
         query = query.substring("create".length()).stripLeading();
 
-        if (!query.startsWith("table "))
+        if (!query.toLowerCase().startsWith("table "))
             throw new QueryParseExceptions("Invalid query syntax: Missing keyword 'table'.");
 
         query = query.substring("table".length()).stripLeading();
 
-        if (!query.startsWith("from"))
+        if (!query.toLowerCase().startsWith("from"))
             throw new QueryParseExceptions("Invalid query syntax: Missing keyword 'from'.");
 
         query = query.substring("from".length()).stripLeading();
 
-        if (!query.startsWith(tableName) && !query.startsWith(databaseName + "." + tableName))
-            throw new QueryParseExceptions("Invalid query syntax: Incorrect database or table name.");
+        if (!query.toLowerCase().startsWith(tableName.toLowerCase()) && !query.toLowerCase().startsWith(databaseName.toLowerCase() + "." + tableName.toLowerCase()))
+            throw new QueryParseExceptions("Invalid query syntax: Incorrect database or table name. This is what we have: " + query);
+
 
         // split query by space, and get the number of rows from the last element
         String[] querySplit = query.split(" ");
@@ -168,9 +169,9 @@ LINES TERMINATED BY '\\n'
     }
 
     private static String basicChecks(String query) throws QueryParseExceptions {
-        if (!query.startsWith("select "))
+        if (!query.toLowerCase().startsWith("select "))
             throw new QueryParseExceptions("Invalid query syntax: Missing keyword 'select'.");
-        if (!query.endsWith(";"))
+        if (!query.toLowerCase().endsWith(";"))
             throw new QueryParseExceptions("Invalid query syntax: Missing ';'.");
         return query.substring("select".length()).stripLeading();
     }
@@ -180,9 +181,9 @@ LINES TERMINATED BY '\\n'
             throw new QueryParseExceptions("Invalid query syntax: Missing Type.");
         if (query.startsWith("* "))
             type = "*";
-        if (query.startsWith("count(*) "))
+        if (query.toLowerCase().startsWith("count(*) "))
             type = "count(*)";
-        if(query.startsWith("sum(")){
+        if(query.toLowerCase().startsWith("sum(")){
             int index= query.indexOf(")");
             if(index==-1)
                 throw new QueryParseExceptions("Invalid query syntax: Missing closing')' braces.");
@@ -199,16 +200,16 @@ LINES TERMINATED BY '\\n'
     }
 
     private static String validateTableName(String query) throws QueryParseExceptions {
-        if (!query.startsWith("from "))
+        if (!query.toLowerCase().startsWith("from "))
             throw new QueryParseExceptions("Invalid query syntax: Missing keyword 'from'.");
         query = query.substring("from".length()).stripLeading();
-        if (!query.startsWith(tableName) && !query.startsWith(databaseName + "." + tableName))
+        if (!query.toLowerCase().startsWith(tableName.toLowerCase()) && !query.toLowerCase().startsWith(databaseName.toLowerCase() + "." + tableName.toLowerCase()))
             throw new QueryParseExceptions("Invalid query syntax: Incorrect table name.");
-        if(query.startsWith(databaseName + "." + tableName))
+        if(query.toLowerCase().startsWith(databaseName.toLowerCase() + "." + tableName.toLowerCase()))
             query = query.substring(databaseName.length() + 1 + tableName.length()).stripLeading();
-        if(query.startsWith(tableName))
+        if(query.toLowerCase().startsWith(tableName.toLowerCase()))
             query = query.substring(tableName.length()).stripLeading();
-        if (query.startsWith("where "))
+        if (query.toLowerCase().startsWith("where "))
             query = query.substring("where".length()).stripLeading();
 
         return query;
@@ -240,7 +241,11 @@ LINES TERMINATED BY '\\n'
         else
             protocol = "single";
 
-        query = query.toLowerCase().replaceAll(" and ", ",").replaceAll(" or ", ",").replaceAll(" ","").replaceAll(";", "");
+        System.out.println(query);
+
+        query = query.replaceAll(" and ", ",").replaceAll(" or ", ",").replaceAll(" AND ", ",").replaceAll(" OR ", ",").replaceAll(" ","").replaceAll(";", "");
+
+        System.out.println(query);
 
 
         String[] predicates = query.split(",");
@@ -404,7 +409,7 @@ LINES TERMINATED BY '\\n'
         }
 
         query = basicChecks(query);
-        query = extractprotocolType(query);
+        query = extractprotocolType(query); // Might have some case issues, check later
         query = validateTableName(query);
         extractPredicates(query);
         String debug = "";
@@ -412,6 +417,10 @@ LINES TERMINATED BY '\\n'
         debug += columnValues.toString() + "\n";
         debug += protocol + "\n";
         debug += type + "\n";
+
+        //System.out.println(debug);
+
+        System.out.println(query); // query should maintain original case
 
         String resultRows = "";
 
@@ -478,7 +487,7 @@ LINES TERMINATED BY '\\n'
         // EXECUTE QUERY TYPE
         // Calculates *, count(*), and sum() based on the resultRows from the protocol
 
-        if(resultRows == ""){
+        if(resultRows.equals("")){
                 System.out.println("No rows match the query");
                 writeResult();
                 return;
