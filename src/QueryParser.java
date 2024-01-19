@@ -469,7 +469,7 @@ LINES TERMINATED BY '\\n'
             debug += columnValues.toString() + "\n";
             debug += protocol + "\n";
             debug += type + "\n";
-            //System.out.println(debug);
+            System.out.println(debug);
         }
 
         System.gc();
@@ -558,16 +558,33 @@ LINES TERMINATED BY '\\n'
                     clientData += nonIntColumns.get(i);
                 }
                 String[] clientArgs = new String[]{clientData};
-                try {
-                    Client04 client = new Client04();
-                    String res = client.main(clientArgs);
-                    res = res.replaceAll("\\[", "").replaceAll("\\]", "").replaceAll(" ", "");
-                    resultRows += res + ",";
-                    System.out.println(res);
-                    client = null;
-                    System.gc();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+
+                if(upper_limit - num_executions == 1){
+                    try {
+                        Client02 client = new Client02();
+                        String res = client.main(clientArgs);
+                        res = res.replaceAll("\\[", "").replaceAll("\\]", "").replaceAll(" ", "");
+                        resultRows += res + ",";
+                        System.out.println(res);
+                        client = null;
+                        System.gc();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                else{
+                    try {
+                        Client04 client = new Client04();
+                        String res = client.main(clientArgs);
+                        res = res.replaceAll("\\[", "").replaceAll("\\]", "").replaceAll(" ", "");
+                        resultRows += res + ",";
+                        System.out.println(res);
+                        client = null;
+                        System.gc();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
                 Thread.sleep(100);
             }    

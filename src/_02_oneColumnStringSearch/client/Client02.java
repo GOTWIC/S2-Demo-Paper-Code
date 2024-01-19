@@ -68,7 +68,7 @@ public class Client02 extends Thread {
 
 
     // default constructor
-    private Client02() {
+    public Client02() {
     }
 
     // parametrised constructor
