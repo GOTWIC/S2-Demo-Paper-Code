@@ -18,7 +18,7 @@ public class convertCSV {
     public static Properties getProperties(){
         return properties;
     }
-    public static int maxLength = 15;
+    public static int maxLength = 25;
     public static int getMaxLength(){
         return maxLength;
     }

@@ -70,17 +70,13 @@ public class QueryParser {
             throw new QueryParseExceptions("Invalid query syntax: Incorrect database or table name. This is what we have: " + query);
 
 
-        // split query by space, and get the number of rows from the last element
-        String[] querySplit = query.split(" ");
-        int noOfRows = Integer.parseInt(querySplit[querySplit.length - 1]);
-
         for (Map.Entry<String, Integer> entry : columnList.entrySet()) {
             String colName = entry.getKey();
             columns_to_split += colName + ",";
         }
 
 
-        String[] arguments = new String[]{String.valueOf(noOfRows), databaseName, tableName,columns_to_split};
+        String[] arguments = new String[]{String.valueOf(numRows), databaseName, tableName,columns_to_split};
         Database_Table_Creator.main(arguments);
 
         // Create server tables 
@@ -242,17 +238,26 @@ LINES TERMINATED BY '\\n'
         else
             protocol = "single";
 
-        query = query.replaceAll(" and ", ",").replaceAll(" or ", ",").replaceAll(" AND ", ",").replaceAll(" OR ", ",").replaceAll(" ","").replaceAll(";", "");
 
+        query = query.replaceAll(" and ", ",").replaceAll(" or ", ",").replaceAll(" AND ", ",").replaceAll(" OR ", ",").replaceAll(";", "");
 
         String[] predicates = query.split(",");
+        HashMap<String, Integer> columnListWithNumTypes = Helper.getColumnListWithNumType();
         for (String predicate : predicates) {
             String[] predicateSplit = predicate.split("=");
-            String colName = predicateSplit[0];
-            String colValue = predicateSplit[1];
+            String colName = predicateSplit[0].replaceAll(" ", "");
+            String colValue = predicateSplit[1].stripLeading().stripTrailing();
             if(!columnList.containsKey(colName.toLowerCase()))
                 throw new QueryParseExceptions("Invalid query syntax: Column " + colName + " not found.");
             columnNames.add(colName.toUpperCase());
+            // Remove quotations
+            if(colValue.startsWith("'") && colValue.endsWith("'"))
+                colValue = colValue.substring(1, colValue.length() - 1);
+
+            // we have a special case where if the value is from a column with type 3, and the value doesn't have a decimal, then we need to add a .0 to the end of the value
+            if(columnListWithNumTypes.get(colName.toLowerCase()) == 3 && (Double.parseDouble(colValue) == (int) Double.parseDouble(colValue))){
+                colValue = String.valueOf((int) Double.parseDouble(colValue)) + ".0";
+            }
             if(columnList.get(colName.toLowerCase()) != 0)
                 colValue = preprocess(colValue);
             columnValues.add(colValue);
@@ -294,6 +299,8 @@ LINES TERMINATED BY '\\n'
     }
 
     private static String preprocess(String data) throws QueryParseExceptions {
+
+        //System.out.println(data);
         data = data.replaceAll("'", "");
         // CHANGE STRING REGEX TO SUPPORT ALL CHARACTERS
         String stringRegex = "[\\x00-\\x7F.]+";
@@ -306,7 +313,7 @@ LINES TERMINATED BY '\\n'
             for (int i = 0; i < data.length(); i++) {
                 char ch = data.charAt(i);
                 if (ch == ' ') {
-                    String temp = "037";
+                    String temp = "032";
                     value = value + temp;
                 } 
                 else {
@@ -347,7 +354,7 @@ LINES TERMINATED BY '\\n'
         return endIndex;
     }
 
-    private static void execute_query(String query){
+    private static void execute_query(String query,boolean info){
         Connection con = null;
         Statement stmt;
         try {
@@ -358,7 +365,16 @@ LINES TERMINATED BY '\\n'
         try {
                 stmt = con.createStatement();  
                 stmt.executeUpdate("SET GLOBAL local_infile=1;");
-                stmt.executeUpdate(query);
+                if(info){
+                    ResultSet rs = stmt.executeQuery(query);
+                    while(rs.next()){
+                        writeToNumRows(rs.getString(1));
+                    }
+                }
+                else{
+                    stmt.executeUpdate(query);
+                }
+
         } catch (Exception e) {
                 e.printStackTrace();
         }     
@@ -375,10 +391,29 @@ LINES TERMINATED BY '\\n'
             e.printStackTrace();
         }
     } 
+
+    private static void writeToNumRows(String numrows){
+        try {
+            FileWriter writer = new FileWriter("result/numrows.txt");
+            writer.append(numrows);
+            writer.flush();
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    } 
     
     private static String removeDuplicates(String input) {
         Set<String> uniqueNumbers = new LinkedHashSet<>(Arrays.asList(input.split(",")));
         return uniqueNumbers.stream().collect(Collectors.joining(","));
+    }
+
+    private static void printFirst(String res){
+        String[] resSplit = res.split("\\r?\\n");
+        int numLines = Math.min(20, resSplit.length - 1);
+        for(int i = 0; i < numLines + 1; i++){
+            System.out.println(resSplit[i]);
+        }
     }
     
     public static void main(String[] args) throws QueryParseExceptions, IOException, InterruptedException {
@@ -387,8 +422,14 @@ LINES TERMINATED BY '\\n'
         origQuery = query;
         query = query.strip().toLowerCase();
 
+        if(query.contains("getdbtbinfo")){
+            String new_query = "select count(*) from " + args[1] + "." + args[2] + ";";
+            execute_query(new_query, true);
+            return;
+        }
+
         if(!query.contains("enc")){
-            execute_query(query);
+            execute_query(query,false);
             writeResult();
             return;
         }
@@ -430,6 +471,9 @@ LINES TERMINATED BY '\\n'
             debug += type + "\n";
             //System.out.println(debug);
         }
+
+        System.gc();
+
 
         String resultRows = "";
 
@@ -473,11 +517,24 @@ LINES TERMINATED BY '\\n'
             }
         }
         else if(protocol.equals("or")){
-            for(int num_executions = 0; num_executions < (int) Math.ceil((double)columnNames.size() / 2); num_executions++){
+
+            // split into int and non-int columns
+
+            ArrayList<String> intColumns = new ArrayList<>();
+            ArrayList<String> nonIntColumns = new ArrayList<>();
+
+            for(int i = 0; i < columnNames.size(); i++){
+                if(columnList.get(columnNames.get(i).toLowerCase()) == 0)
+                    intColumns.add(columnNames.get(i) + "," + columnValues.get(i) + ",");
+                else
+                    nonIntColumns.add(columnNames.get(i) + "," + columnValues.get(i) + ",");
+            }
+
+            for(int num_executions = 0; num_executions < (int) Math.ceil((double)intColumns.size() / 2); num_executions++){
                 String clientData = "";
-                int upper_limit = Math.min(columnNames.size(), num_executions * 2 + 2);
+                int upper_limit = Math.min(intColumns.size(), num_executions * 2 + 2);
                 for(int i = num_executions * 2; i < upper_limit; i++){
-                    clientData += columnNames.get(i) + "," + columnValues.get(i) + ",";
+                    clientData += intColumns.get(i);
                 }
                 String[] clientArgs = new String[]{clientData};
                 try {
@@ -485,13 +542,37 @@ LINES TERMINATED BY '\\n'
                     String res = client.main(clientArgs);
                     res = res.replaceAll("\\[", "").replaceAll("\\]", "").replaceAll(" ", "");
                     resultRows += res + ",";
+                    System.out.println(res);
                     client = null;
                     System.gc();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
                 Thread.sleep(100);
-            }            
+            }           
+            
+            for(int num_executions = 0; num_executions < (int) Math.ceil((double)nonIntColumns.size() / 2); num_executions++){
+                String clientData = "";
+                int upper_limit = Math.min(nonIntColumns.size(), num_executions * 2 + 2);
+                for(int i = num_executions * 2; i < upper_limit; i++){
+                    clientData += nonIntColumns.get(i);
+                }
+                String[] clientArgs = new String[]{clientData};
+                try {
+                    Client04 client = new Client04();
+                    String res = client.main(clientArgs);
+                    res = res.replaceAll("\\[", "").replaceAll("\\]", "").replaceAll(" ", "");
+                    resultRows += res + ",";
+                    System.out.println(res);
+                    client = null;
+                    System.gc();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                Thread.sleep(100);
+            }    
+            
+
         }
         else if(protocol.equals("NULL")){
             resultRows = "";
@@ -501,7 +582,7 @@ LINES TERMINATED BY '\\n'
         }
 
         resultRows = removeDuplicates(resultRows);
-        //System.out.println(resultRows);
+        //System.out.println("Result Rows: " + resultRows);
 
         // EXECUTE QUERY TYPE
         // Calculates *, count(*), and sum() based on the resultRows from the protocol
@@ -522,7 +603,7 @@ LINES TERMINATED BY '\\n'
             String[] clientArgs = new String[]{resultRows, "NONE/NULL/??"};
             try {
                 String res = Client05.main(clientArgs);
-                System.out.println(res);
+                printFirst(res);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

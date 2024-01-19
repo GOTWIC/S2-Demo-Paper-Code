@@ -22,9 +22,11 @@ public class Helper {
     private static final Logger log = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     private static LinkedHashMap<String, Integer> columnList = new LinkedHashMap<>();
+    private static LinkedHashMap<String, Integer> columnListWithNumTypes = new LinkedHashMap<>();
     private static int noOfColumns;
 
-    private static String mulMod = "9794379537450709974983168981399384873473832303";
+    //private static String mulMod = "9794379537450709974983168981399384873473832303";
+    private static String mulMod = "7262480193747257723624289403070128438206601920881360416052686029563070255303828996727";
     private static int addMod = 100000007;
 
 
@@ -549,6 +551,44 @@ public class Helper {
         }
     }
 
+    public static void getTableMetadataWithNumTypes() {
+        Statement stmt;
+        ResultSet rs;
+        Connection con = null;
+
+        try {
+                con = Helper.getConnection();
+        } catch (SQLException e) {
+                e.printStackTrace();
+        }
+
+        try {
+            stmt = con.createStatement();
+            rs = stmt.executeQuery("show COLUMNS from " + getDatabaseName() + "." + getTableName());
+
+            // reset columnList
+            columnListWithNumTypes = new LinkedHashMap<>();
+
+            while (rs.next()) {
+                String col_type_str = rs.getString("Type").toLowerCase();
+                int col_type = 1;
+                if (col_type_str.contains("int"))
+                    col_type = 0;
+                else if (col_type_str.contains("char"))
+                    col_type = 1;
+                else if (col_type_str.contains("date"))
+                    col_type = 2;
+                
+                // for integer, smallint, decimal, numeric, float, real, double, dec, and fixed
+                else if (col_type_str.contains("integer") || col_type_str.contains("smallint") || col_type_str.contains("decimal") || col_type_str.contains("numeric") || col_type_str.contains("float") || col_type_str.contains("real") || col_type_str.contains("double") || col_type_str.contains("dec") || col_type_str.contains("fixed"))
+                    col_type = 3;
+                columnListWithNumTypes.put(rs.getString("Field").toLowerCase(), col_type);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static String getTableName(){
         Properties properties = readPropertiesFile(mainDir + "config/userinfo.properties");
         return properties.getProperty("tableName");
@@ -571,6 +611,11 @@ public class Helper {
     public static LinkedHashMap<String,Integer> getColumnList(){
         getTableMetadata();
         return columnList;
+    }
+
+    public static LinkedHashMap<String,Integer> getColumnListWithNumType(){
+        getTableMetadataWithNumTypes();
+        return columnListWithNumTypes;
     }
 
     public static int[] generateRandomArr(int[] intArray) {

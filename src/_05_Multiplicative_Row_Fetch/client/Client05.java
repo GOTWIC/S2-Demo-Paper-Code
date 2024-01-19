@@ -357,9 +357,20 @@ public class Client05 extends Thread {
     private static String calculateSum(){
         double sum = 0; 
         int sum_col_idx = colNames.indexOf(sum_col);
-        for(int i = 0; i < resultCombiner.length; i++){
-            sum += resultCombiner[i][sum_col_idx].doubleValue();
+        HashMap<String, Integer> columnListWithNumTypes = Helper.getColumnListWithNumType();
+        if(columnListWithNumTypes.get(sum_col) == 3){ // there is a decimal and thus we have to convert from string to numerical value
+            for(int i = 0; i < resultCombiner.length; i++){
+                double temp = Double.valueOf(Helper.ascii_reverse(resultCombiner[i][sum_col_idx].toString()));
+                sum += temp;
+            }
         }
+
+        else{
+            for(int i = 0; i < resultCombiner.length; i++){
+                sum += resultCombiner[i][sum_col_idx].doubleValue();
+            }
+        }
+
         return String.valueOf(sum);
     }
 

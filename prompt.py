@@ -93,27 +93,62 @@ while True:
 
         if "enc create table" in query:
                # get the db and table name
-                names = query.replace("enc create table from ", "").split(" ")[0].split(".")
+                names = query.replace("enc create table from ", "").split(".")
 
-                # get numRows
-                numRows = query.replace("enc create table from ", "").split(" ")[1]
+                # clear the numrow log
+                f = open("result/numrows.txt", "w")
+                f.write("")
+                f.close()
+
+                print("Fetching Metadata from table...")
+
+                # get numrows
+                numRows = 0
+                Popen("java -cp \"" + classPath + f"\" src/QueryParser \"getdbtbinfo\" {names[0]} {names[1]} > prompt_logs/client.txt")
+
+                # wait for the numrows to be written
+
+                while True:
+                    f = open("result/numrows.txt", "r")
+                    contents = f.read()
+                    if contents != "":
+                            numRows = contents
+                            f.close()
+                            break
+                    f.close()
 
                 updateConfigFiles(names[0],names[1],numRows)
 
                 # append all info in config/encryptedSchemas.properties
-                f = open("config/encryptedSchemas.properties", "a")
-                f.write(f"{names[0]}.{names[1]}.{numRows}\n")
+                f = open("config/encryptedSchemas.properties", "r+")
+                contents = f.read().split("\n")
+                update = False
+                new_contents = []
+                for schema in contents:
+                    temp = schema.split(".")
+                    if temp[0] == names[0] and temp[1] == names[1]:
+                            temp[2] = numRows
+                            update = True
+                    new_contents.append(".".join(temp))
+
+                if not update:
+                        new_contents.append(f"{names[0]}.{names[1]}.{numRows}")
+
+                f.seek(0)
+                f.write("\n".join(new_contents))
                 f.close()
         
         if "enc use" in query:
                 # get the db and table name
                 names = query.replace("enc use ", "").split(".")
 
-                if getRowCount(names) == -1:
+                if getRowCount(query.replace("enc use ", "")) == -1:
                     print("The requested schema/table has not yet been encrypted. Please encrypt it first.")
                     continue
 
-                updateConfigFiles(names[0],names[1],getRowCount(names))
+                updateConfigFiles(names[0],names[1],getRowCount(query.replace("enc use ", "")))
+                print("Successfully switched to " + names[0] + "." + names[1] + ".")
+                continue
 
         #if "'" in query:
             #query = query.replace("'", "'\\\"'")

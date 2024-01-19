@@ -354,7 +354,7 @@ public class Database_Table_Creator {
                 // System.out.println("Table Splitting Time: " + tableSplittingTime + " ms");
 
             } catch (SQLException ex) {
-                System.out.println(ex);
+                System.out.println(query_base + startRow + ", " + numRows);
             }
 
             Duration totalThreadTime = Duration.between(threadStartTime, Instant.now());
@@ -484,7 +484,7 @@ public class Database_Table_Creator {
         // Insert error if exceeds max len?
         String numericals = "";
 
-        if(str == null){
+        if(str == null || str.length() == 0){
             for(int i = 0; i < max_len; i++)
                 numericals += String.valueOf("999");
             return numericals;

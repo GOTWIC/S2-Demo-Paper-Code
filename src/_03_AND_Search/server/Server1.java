@@ -59,7 +59,7 @@ public class Server1 {
     // stores IP for combiner
     private static String combinerIP;
 
-    static Map<String, Integer> tableMetadata = new HashMap<String, Integer>();
+    static Map<String, Integer> tableMetadata = null;
 
     private static final int portIncrement = 20;
 
@@ -268,7 +268,8 @@ public class Server1 {
     
 
     private static int getColumnType(String col_name){
-        tableMetadata = Helper.getColumnList();
+        if(tableMetadata == null)
+            tableMetadata = Helper.getColumnList();
         return tableMetadata.get(col_name.toLowerCase());
     }
 
