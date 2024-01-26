@@ -2,35 +2,45 @@ from subprocess import Popen
 import time
 from configobj import ConfigObj
 
-basePath = "C:/Users/shoum/Documents/VLDBPaperDemo/S2-VLDB-2023-main"
-classPath = basePath + ";" + basePath + "/mysqlConnector/mysql-connector-java-8.0.29.jar"
+basepath = "/home/ubuntu/S2-VLDB-2023-main"
+classPath = ".:mysqlConnector/mysql-connector-java-8.0.29.jar"
 
 # Compile
 
 def compile_scripts():
-    # Database Table Creator
-    Popen("javac -cp \"" + classPath + "\" src/_00_Database_Table_Creator/*.java")
-
-    # One Column Number Search
-    Popen("javac -cp \"" + classPath + "\" src/_01_oneColumnNumberSearch/client/*.java src/_01_oneColumnNumberSearch/combiner/*.java src/_01_oneColumnNumberSearch/server/*.java")
-    
-    # One Column String Search
-    Popen("javac -cp \"" + classPath + "\" src/_02_oneColumnStringSearch/client/*.java src/_02_oneColumnStringSearch/combiner/*.java src/_02_oneColumnStringSearch/server/*.java")
-
-    # AND Search
-    Popen("javac -cp \"" + classPath + "\" src/_03_AND_Search/client/*.java src/_03_AND_Search/combiner/*.java src/_03_AND_Search/server/*.java")
-
-    # OR Search
-    Popen("javac -cp \"" + classPath + "\" src/_04_OR_Search/client/*.java src/_04_OR_Search/combiner/*.java src/_04_OR_Search/server/*.java")
-
-    # Multiplicative Row Fetch
-    Popen("javac -cp \"" + classPath + "\" src/_05_Multiplicative_Row_Fetch/client/*.java src/_05_Multiplicative_Row_Fetch/combiner/*.java src/_05_Multiplicative_Row_Fetch/server/*.java")
 
     # Helper
-    Popen("javac -cp \"" + classPath + "\" utility/Helper.java")
+    Popen("javac -cp " + classPath + " utility/Helper.java", shell=True)
+
+    # convertCSV
+    Popen("javac -cp " + classPath + " src/convertCSV.java", shell=True)
+
+    # constant
+    Popen("javac -cp " + classPath + " constant/Constants.java", shell=True)
+
+    # Database Table Creator
+    Popen("javac -cp " + classPath + " src/_00_Database_Table_Creator/*.java", shell=True)
+
+    # One Column Number Search
+    Popen("javac -cp " + classPath + " src/_01_oneColumnNumberSearch/client/*.java src/_01_oneColumnNumberSearch/combiner/*.java src/_01_oneColumnNumberSearch/server/*.java", shell=True)
+    
+    # One Column String Search
+    Popen("javac -cp " + classPath + " src/_02_oneColumnStringSearch/client/*.java src/_02_oneColumnStringSearch/combiner/*.java src/_02_oneColumnStringSearch/server/*.java", shell=True)
+
+    # AND Search
+    Popen("javac -cp " + classPath + " src/_03_AND_Search/client/*.java src/_03_AND_Search/combiner/*.java src/_03_AND_Search/server/*.java", shell=True)
+
+    # OR Search
+    Popen("javac -cp " + classPath + " src/_04_OR_Search/client/*.java src/_04_OR_Search/combiner/*.java src/_04_OR_Search/server/*.java", shell=True)
+
+    # Multiplicative Row Fetch
+    Popen("javac -cp " + classPath + " src/_05_Multiplicative_Row_Fetch/client/*.java src/_05_Multiplicative_Row_Fetch/combiner/*.java src/_05_Multiplicative_Row_Fetch/server/*.java", shell=True)
+
+    # Helper
+    Popen("javac -cp " + classPath + " utility/Helper.java", shell=True)
 
     # Everything Else
-    Popen("javac -cp \"" + classPath + "\" src/*.java")
+    Popen("javac -cp " + classPath + " src/*.java", shell=True)
     
 
 
@@ -42,15 +52,9 @@ def run_scripts():
 
     for i in range(len(serverCounts)):
         for j in range(serverCounts[i]):
-            Popen("java -cp \"" + classPath + "\" src/" + folderNames[i] + "/server/Server" + str(j+1) + " > prompt_logs/s" + str(serverCounter) + ".txt", shell = False)
+            Popen("java -cp " + classPath + " src/" + folderNames[i] + "/server/Server" + str(j+1) + " > prompt_logs/s" + str(serverCounter) + ".txt", shell = True)
             serverCounter += 1
-        Popen("java -cp \"" + classPath + "\" src/" + folderNames[i] + "/combiner/Combiner > prompt_logs/comb" + str(i)  + ".txt", shell = False)
-
-
-def run_scripts_test():
-    Popen("java -cp \"" + classPath + "\" src/" + "server1" + " > prompt_logs/s" + "1" + ".txt", shell = False)
-    Popen("java -cp \"" + classPath + "\" src/" + "server2" + " > prompt_logs/s" + "2" + ".txt", shell = False)
-    Popen("java -cp \"" + classPath + "\" src/" + "combiner" + " > prompt_logs/comb1" + ".txt", shell = False)
+        Popen("java -cp " + classPath + " src/" + folderNames[i] + "/combiner/Combiner > prompt_logs/comb" + str(i)  + ".txt", shell = True)
 
 def getRowCount(req):
         f = open("config/encryptedSchemas.properties", "r")
@@ -81,7 +85,7 @@ def updateConfigFiles(db,tbl,r):
         #f.close()
 
 compile_scripts()
-run_scripts_test()
+#run_scripts()
 
 Popen("clear")
 
@@ -110,7 +114,7 @@ while True:
 
                 # get numrows
                 numRows = 0
-                Popen("java -cp \"" + classPath + f"\" src/QueryParser \"getdbtbinfo\" {names[0]} {names[1]} > prompt_logs/client.txt")
+                Popen("java -cp " + classPath + f" src/QueryParser \"getdbtbinfo\" {names[0]} {names[1]} > prompt_logs/client.txt")
 
                 # wait for the numrows to be written
 
@@ -159,7 +163,7 @@ while True:
         #if "'" in query:
             #query = query.replace("'", "'\\\"'")
 
-        Popen("java -cp \"" + classPath + f"\" src/QueryParser \"{query}\" > prompt_logs/client.txt")
+        Popen("java -cp " + classPath + f" src/QueryParser \"{query}\" > prompt_logs/client.txt")
         
         # Check for finish flag from the query parser
         while True:

@@ -1,4 +1,4 @@
-package src._01_oneColumnNumberSearch.combiner;
+package src;
 
 import constant.*;
 import utility.Helper;
@@ -17,12 +17,9 @@ import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Combiner extends Thread {
-    // stores result received from servers
-    private static List<int[]> serverResult_01 = Collections.synchronizedList(new ArrayList<>());
-    private static final ExecutorService threadPool_01 = Executors.newFixedThreadPool(Constants.getThreadPoolSize());
-    private static List<SocketCreation> socketCreations_01 = new ArrayList<>();
-    private static int[] result_01;
+public class combiner extends Thread {
+
+    // ---------------- UNIVERSAL SERVER GLOBALS ---------------- \\
 
     // the number of row of tpch.lineitem considered
     private static int numRows;
@@ -37,15 +34,40 @@ public class Combiner extends Thread {
     private static int clientPort;
     // stores IP value for client
     private static String clientIP;
+    private static final int portIncrement = 0;
+    private static ArrayList<Instant> timestamps = new ArrayList<>();
+    private static List<SocketCreation> socketCreations = new ArrayList<>();
+    private static final ExecutorService threadPool = Executors.newFixedThreadPool(Constants.getThreadPoolSize());
+
+    private int protocol = 0;
+
+
+    // ---------------- 01 COMBINER GLOBALS ---------------- \\
+
+         // stores result received from servers
+        private static List<int[]> serverResult_01 = Collections.synchronizedList(new ArrayList<>());
+        private static int[] result_01;
+
+        // stores server data
+        private static int[] server1_01;
+        private static int[] server2_01;
+    
+        private static final Logger log_01 = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+
+    // ---------------- 02 COMBINER GLOBALS ---------------- \\
+
+    // stores result received from servers
+    private static List<int[]> serverResult_02 = Collections.synchronizedList(new ArrayList<>());
+    private static int[] result_02;
 
     // stores server data
-    private static int[] server1_01;
-    private static int[] server2_01;
+    private static int[] server1_02;
+    private static int[] server2_02;
 
-    private static final Logger log_01 = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-    private static ArrayList<Instant> timestamps = new ArrayList<>();
+    private static final Logger log_02 = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
-    private static final int portIncrement = 0;
+
+    // ---------------- 01 COMBINER CODE ---------------- \\
 
     // operation performed by each thread
     private static class ParallelTask_01 implements Runnable {
@@ -98,7 +120,63 @@ public class Combiner extends Thread {
         }
     }
 
-    // socket to read data from servers
+
+    // ---------------- 02 COMBINER CODE ---------------- \\
+
+    // operation performed by each thread
+    private static class ParallelTask_02 implements Runnable {
+        private int threadNum;
+
+        public ParallelTask_02(int threadNum) {
+            this.threadNum = threadNum;
+        }
+
+        @Override
+        public void run() {
+            int startRow = (threadNum - 1) * numRowsPerThread;
+            int endRow = startRow + numRowsPerThread;
+
+            // adding data received from the server
+            for (int i = startRow; i < endRow; i++) {
+                result_02[i] = (int) Helper.mod((long) server1_02[i] + (long) server2_02[i]);
+            }
+        }
+    }
+
+    // working on server data to process for client
+    private static void doWork_02() {
+        // the list containing all the threads
+
+        server1_02 = serverResult_02.get(0);
+        server2_02 = serverResult_02.get(1);
+        List<Thread> threadList = new ArrayList<>();
+
+        // create threads and add them to threadlist
+        int threadNum;
+        for (int i = 0; i < numThreads; i++) {
+            threadNum = i + 1;
+            threadList.add(new Thread(new ParallelTask_02(threadNum), "Thread" + threadNum));
+        }
+
+        // start all threads
+        for (int i = 0; i < numThreads; i++) {
+            threadList.get(i).start();
+        }
+
+        // wait for all threads to finish
+        for (Thread thread : threadList) {
+            try {
+                thread.join();
+            } catch (InterruptedException ex) {
+                log_02.log(Level.SEVERE, ex.getMessage());
+            }
+        }
+    }
+
+
+    // ---------------- UNIVERSAL CODE ---------------- \\
+
+
     class SocketCreation implements Runnable {
 
         private final Socket serverSocket;
@@ -114,7 +192,21 @@ public class Combiner extends Thread {
                 // initializing input stream for reading the data
                 inFromServer = new ObjectInputStream(serverSocket.getInputStream());
                 int[] data=(int[]) inFromServer.readObject();
-                serverResult_01.add(data);
+
+                protocol = data[0];
+                //System.out.println("Protocol: " + protocol);
+
+                // remove the first element
+                int[] temp = new int[data.length - 1];
+                System.arraycopy(data, 1, temp, 0, temp.length);
+
+                if(protocol == 1){
+                    serverResult_01.add(temp);
+                }
+                else if (protocol == 2){
+                    serverResult_02.add(temp);
+                }
+
                 //socket closed
                 serverSocket.close();
             } catch (IOException | ClassNotFoundException ex) {
@@ -123,13 +215,15 @@ public class Combiner extends Thread {
         }
     }
 
+    /*
+    TODO: What is this for?
     @Override
     public void run() {
         startCombiner();
         super.run();
     }
+    */
 
-    // starting combiner to process server data
     private void startCombiner() {
         Socket serverSocket;
         Socket clientSocket;
@@ -143,29 +237,48 @@ public class Combiner extends Thread {
                 // listening over the socket for connections
                 serverSocket = ss.accept();
                 // reading data from the server
-                socketCreations_01.add(new SocketCreation(serverSocket));
+                socketCreations.add(new SocketCreation(serverSocket));
                 // processing data after receiving data from both the servers
-                if (socketCreations_01.size() == 2) {
+                if (socketCreations.size() == 2) {
                     timestamps = new ArrayList<>();
                     timestamps.add(Instant.now());
-                    for (SocketCreation socketCreation : socketCreations_01) {
-                        serverJobs.add(threadPool_01.submit(socketCreation));
+                    for (SocketCreation socketCreation : socketCreations) {
+                        serverJobs.add(threadPool.submit(socketCreation));
                     }
                     for (Future<?> future : serverJobs)
                         future.get();
-                    doWork_01();
 
-                    // sending data from the client
-                    clientSocket = new Socket(clientIP, clientPort);
-                    ObjectOutputStream outToClient = new ObjectOutputStream(clientSocket.getOutputStream());
-                    outToClient.writeObject(result_01);
-                    clientSocket.close();
+                    if(protocol == 1){
+                        doWork_01();
 
-                    // resetting storage variables
-                    result_01 = new int[numRows];
+                        // sending data from the client
+                        clientSocket = new Socket(clientIP, clientPort);
+                        ObjectOutputStream outToClient = new ObjectOutputStream(clientSocket.getOutputStream());
+                        outToClient.writeObject(result_01);
+                        clientSocket.close();
+
+                        // resetting storage variables
+                        result_01 = new int[numRows];
+                        serverResult_01 = Collections.synchronizedList(new ArrayList<>());
+                    }
+
+                    else if (protocol == 2){
+                        doWork_02();
+
+                        // sending data from the client
+                        clientSocket = new Socket(clientIP, clientPort);
+                        ObjectOutputStream outToClient = new ObjectOutputStream(clientSocket.getOutputStream());
+                        outToClient.writeObject(result_02);
+                        clientSocket.close();
+
+                        // resetting storage variables
+                        result_02 = new int[numRows];
+                        serverResult_02 = Collections.synchronizedList(new ArrayList<>());
+                    }
+
+
                     serverJobs = new ArrayList<>();
-                    serverResult_01 = Collections.synchronizedList(new ArrayList<>());
-                    socketCreations_01 = new ArrayList<>();
+                    socketCreations = new ArrayList<>();
 
                     // calculating the time spent
                     timestamps.add(Instant.now());
@@ -178,9 +291,9 @@ public class Combiner extends Thread {
         }
     }
 
-    /**
-     * It performs initialization tasks
-     */
+
+
+
     private static void doPreWork(String[] args) {
         // reading combiner configuration file
         String pathName = "config/Combiner.properties";
@@ -194,18 +307,19 @@ public class Combiner extends Thread {
         clientIP = properties.getProperty("clientIP");
         combinerPort = Integer.parseInt(properties.getProperty("combinerPort")) + portIncrement;
 
+        // TODO: These may not be needed, check later
         result_01 = new int[numRows];
+        result_02 = new int[numRows];
     }
 
-    /**
-     * combiner process the data received from server before sending to client
-     */
+
     public static void main(String args[]) {
 
         doPreWork(args);
 
-        Combiner combiner = new Combiner();
+        combiner combiner = new combiner();
         combiner.startCombiner();
 
     }
+    
 }

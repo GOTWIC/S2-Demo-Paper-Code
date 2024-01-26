@@ -187,6 +187,7 @@ public class Client01 extends Thread {
             // socket creation and initialising output stream to write data
             socket = new Socket(IP, port);
             outToServer = new ObjectOutputStream(socket.getOutputStream());
+            
             // writing data to stream
             outToServer.writeObject(data);
             // socket closed
@@ -207,10 +208,10 @@ public class Client01 extends Thread {
 
         // server data preparation
         String[] data;
-        data = new String[]{columnName, String.valueOf(additiveShare1), String.valueOf(seedClient)};
+        data = new String[]{"num",columnName, String.valueOf(additiveShare1), String.valueOf(seedClient)};
         Client01 server1 = new Client01(server1IP, server1Port, data);
 
-        data = new String[]{columnName, String.valueOf(additiveShare2)};
+        data = new String[]{"num",columnName, String.valueOf(additiveShare2)};
         Client01 server2 = new Client01(server2IP, server2Port, data);
 
         // sending data to each server

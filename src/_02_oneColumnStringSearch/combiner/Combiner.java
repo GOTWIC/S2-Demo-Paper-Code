@@ -19,10 +19,10 @@ import java.util.logging.Logger;
 
 public class Combiner extends Thread {
     // stores result received from servers
-    private static List<int[]> serverResult = Collections.synchronizedList(new ArrayList<>());
-    private static final ExecutorService threadPool = Executors.newFixedThreadPool(Constants.getThreadPoolSize());
-    private static List<SocketCreation> socketCreations = new ArrayList<>();
-    private static int[] result;
+    private static List<int[]> serverResult_02 = Collections.synchronizedList(new ArrayList<>());
+    private static final ExecutorService threadPool_02 = Executors.newFixedThreadPool(Constants.getThreadPoolSize());
+    private static List<SocketCreation> socketCreations_02 = new ArrayList<>();
+    private static int[] result_02;
 
     // the number of row of tpch.lineitem considered
     private static int numRows;
@@ -39,19 +39,19 @@ public class Combiner extends Thread {
     private static String clientIP;
 
     // stores server data
-    private static int[] server1;
-    private static int[] server2;
+    private static int[] server1_02;
+    private static int[] server2_02;
 
-    private static final Logger log = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+    private static final Logger log_02 = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
     private static ArrayList<Instant> timestamps = new ArrayList<>();
 
-    private static final int portIncrement = 10;
+    private static final int portIncrement = 0;
 
     // operation performed by each thread
-    private static class ParallelTask implements Runnable {
+    private static class ParallelTask_02 implements Runnable {
         private int threadNum;
 
-        public ParallelTask(int threadNum) {
+        public ParallelTask_02(int threadNum) {
             this.threadNum = threadNum;
         }
 
@@ -62,24 +62,24 @@ public class Combiner extends Thread {
 
             // adding data received from the server
             for (int i = startRow; i < endRow; i++) {
-                result[i] = (int) Helper.mod((long) server1[i] + (long) server2[i]);
+                result_02[i] = (int) Helper.mod((long) server1_02[i] + (long) server2_02[i]);
             }
         }
     }
 
     // working on server data to process for client
-    private static void doWork() {
+    private static void doWork_02() {
         // the list containing all the threads
 
-        server1 = serverResult.get(0);
-        server2 = serverResult.get(1);
+        server1_02 = serverResult_02.get(0);
+        server2_02 = serverResult_02.get(1);
         List<Thread> threadList = new ArrayList<>();
 
         // create threads and add them to threadlist
         int threadNum;
         for (int i = 0; i < numThreads; i++) {
             threadNum = i + 1;
-            threadList.add(new Thread(new ParallelTask(threadNum), "Thread" + threadNum));
+            threadList.add(new Thread(new ParallelTask_02(threadNum), "Thread" + threadNum));
         }
 
         // start all threads
@@ -92,10 +92,11 @@ public class Combiner extends Thread {
             try {
                 thread.join();
             } catch (InterruptedException ex) {
-                log.log(Level.SEVERE, ex.getMessage());
+                log_02.log(Level.SEVERE, ex.getMessage());
             }
         }
     }
+
 
     // socket to read data from servers
     class SocketCreation implements Runnable {
@@ -113,11 +114,11 @@ public class Combiner extends Thread {
                 // initializing input stream for reading the data
                 inFromServer = new ObjectInputStream(serverSocket.getInputStream());
                 int[] data=(int[]) inFromServer.readObject();
-                serverResult.add(data);
+                serverResult_02.add(data);
                 //socket closed
                 serverSocket.close();
             } catch (IOException | ClassNotFoundException ex) {
-                log.log(Level.SEVERE, ex.getMessage());
+                log_02.log(Level.SEVERE, ex.getMessage());
             }
         }
     }
@@ -142,29 +143,29 @@ public class Combiner extends Thread {
                 // listening over the socket for connections
                 serverSocket = ss.accept();
                 // reading data from the server
-                socketCreations.add(new SocketCreation(serverSocket));
+                socketCreations_02.add(new SocketCreation(serverSocket));
                 // processing data after receiving data from both the servers
-                if (socketCreations.size() == 2) {
+                if (socketCreations_02.size() == 2) {
                     timestamps = new ArrayList<>();
                     timestamps.add(Instant.now());
-                    for (SocketCreation socketCreation : socketCreations) {
-                        serverJobs.add(threadPool.submit(socketCreation));
+                    for (SocketCreation socketCreation : socketCreations_02) {
+                        serverJobs.add(threadPool_02.submit(socketCreation));
                     }
                     for (Future<?> future : serverJobs)
                         future.get();
-                    doWork();
+                    doWork_02();
 
                     // sending data from the client
                     clientSocket = new Socket(clientIP, clientPort);
                     ObjectOutputStream outToClient = new ObjectOutputStream(clientSocket.getOutputStream());
-                    outToClient.writeObject(result);
+                    outToClient.writeObject(result_02);
                     clientSocket.close();
 
                     // resetting storage variables
-                    result = new int[numRows];
+                    result_02 = new int[numRows];
                     serverJobs = new ArrayList<>();
-                    serverResult = Collections.synchronizedList(new ArrayList<>());
-                    socketCreations = new ArrayList<>();
+                    serverResult_02 = Collections.synchronizedList(new ArrayList<>());
+                    socketCreations_02 = new ArrayList<>();
 
                     // calculating the time spent
                     timestamps.add(Instant.now());
@@ -173,7 +174,7 @@ public class Combiner extends Thread {
                 }
             }
         } catch (IOException | ExecutionException | InterruptedException ex) {
-            log.log(Level.SEVERE, ex.getMessage());
+            log_02.log(Level.SEVERE, ex.getMessage());
         }
     }
 
@@ -193,7 +194,7 @@ public class Combiner extends Thread {
         clientIP = properties.getProperty("clientIP");
         combinerPort = Integer.parseInt(properties.getProperty("combinerPort")) + portIncrement;
 
-        result = new int[numRows];
+        result_02 = new int[numRows];
     }
 
     /**

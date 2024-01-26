@@ -64,7 +64,7 @@ public class Client02 extends Thread {
     // the name of file storing the query result under result/ folder
     private static final String resultFileName = "_01_oneColumnStringSearch";
 
-    private static final int portIncrement = 10;
+    private static final int portIncrement = 0;
 
 
     // default constructor
@@ -211,10 +211,10 @@ public class Client02 extends Thread {
 
         // server data preparation
         String[] data;
-        data = new String[]{columnName, String.valueOf(fingerprint1), String.valueOf(seedClient)};
+        data = new String[]{"str", columnName, String.valueOf(fingerprint1), String.valueOf(seedClient)};
         Client02 server1 = new Client02(server1IP, server1Port, data);
 
-        data = new String[]{columnName, String.valueOf(fingerprint2)};
+        data = new String[]{"str", columnName, String.valueOf(fingerprint2)};
         Client02 server2 = new Client02(server2IP, server2Port, data);
 
         // sending data to each server
