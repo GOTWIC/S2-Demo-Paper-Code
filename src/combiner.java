@@ -67,6 +67,16 @@ public class combiner extends Thread {
     private static final Logger log_02 = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
 
+    // ---------------- 03 COMBINER GLOBALS ---------------- \\
+
+    private static List<int[]> serverResult_03 = Collections.synchronizedList(new ArrayList<>());
+    private static int[] result_03;
+    // stores server data
+    private static int[] server1_03;
+    private static int[] server2_03;
+
+    private static final Logger log_03 = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+
     // ---------------- 01 COMBINER CODE ---------------- \\
 
     // operation performed by each thread
@@ -173,6 +183,58 @@ public class combiner extends Thread {
         }
     }
 
+    // ---------------- 03 COMBINER CODE ---------------- \\
+
+        // operation performed by each thread
+        private static class ParallelTask_03 implements Runnable {
+            private int threadNum;
+    
+            public ParallelTask_03(int threadNum) {
+                this.threadNum = threadNum;
+            }
+    
+            @Override
+            public void run() {
+                int startRow = (threadNum - 1) * numRowsPerThread;
+                int endRow = startRow + numRowsPerThread;
+                // adding data received from the server
+                for (int i = startRow; i < endRow; i++) {
+                    result_03[i] = (int) Helper.mod((long) server1_03[i] + (long) server2_03[i]);
+                }
+            }
+        }
+    
+        // working on server data to process for client
+        private static void doWork_03() {
+            // the list containing all the threads
+    
+            server1_03 = serverResult_03.get(0);
+            server2_03 = serverResult_03.get(1);
+            List<Thread> threadList = new ArrayList<>();
+    
+            // create threads and add them to threadlist
+            int threadNum;
+            for (int i = 0; i < numThreads; i++) {
+                threadNum = i + 1;
+                threadList.add(new Thread(new ParallelTask_03(threadNum), "Thread" + threadNum));
+            }
+    
+            // start all threads
+            for (int i = 0; i < numThreads; i++) {
+    
+                threadList.get(i).start();
+            }
+    
+            // wait for all threads to finish
+            for (Thread thread : threadList) {
+                try {
+                    thread.join();
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
+   
 
     // ---------------- UNIVERSAL CODE ---------------- \\
 
@@ -206,6 +268,9 @@ public class combiner extends Thread {
                 else if (protocol == 2){
                     serverResult_02.add(temp);
                 }
+                else if (protocol == 3){
+                    serverResult_03.add(temp);
+                }
 
                 //socket closed
                 serverSocket.close();
@@ -215,14 +280,12 @@ public class combiner extends Thread {
         }
     }
 
-    /*
-    TODO: What is this for?
+
     @Override
     public void run() {
         startCombiner();
         super.run();
     }
-    */
 
     private void startCombiner() {
         Socket serverSocket;
@@ -276,6 +339,20 @@ public class combiner extends Thread {
                         serverResult_02 = Collections.synchronizedList(new ArrayList<>());
                     }
 
+                    else if (protocol == 3){
+                        doWork_03();
+
+                        // sending data from the client
+                        clientSocket = new Socket(clientIP, clientPort);
+                        ObjectOutputStream outToClient = new ObjectOutputStream(clientSocket.getOutputStream());
+                        outToClient.writeObject(result_03);
+                        clientSocket.close();
+
+                        // resetting storage variables
+                        result_03 = new int[numRows];
+                        serverResult_03 = Collections.synchronizedList(new ArrayList<>());
+                    }
+
 
                     serverJobs = new ArrayList<>();
                     socketCreations = new ArrayList<>();
@@ -290,9 +367,6 @@ public class combiner extends Thread {
             log_01.log(Level.SEVERE, ex.getMessage());
         }
     }
-
-
-
 
     private static void doPreWork(String[] args) {
         // reading combiner configuration file
@@ -310,6 +384,7 @@ public class combiner extends Thread {
         // TODO: These may not be needed, check later
         result_01 = new int[numRows];
         result_02 = new int[numRows];
+        result_03 = new int[numRows];
     }
 
 

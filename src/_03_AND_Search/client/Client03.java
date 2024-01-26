@@ -68,7 +68,7 @@ public class Client03 extends Thread {
 
     static Map<String, Integer> tableMetadata = new HashMap<String, Integer>();
 
-    private static final int portIncrement = 20;
+    private static final int portIncrement = 0;
 
     // default constructor
     private Client03() {
@@ -210,10 +210,10 @@ public class Client03 extends Thread {
     private static void doPostWork() {
         // server data preparation
         String[] data;
-        data = new String[]{Helper.strArrToStr(columnName), String.valueOf(fingerprint1), String.valueOf(seedClient)};
+        data = new String[]{"and", Helper.strArrToStr(columnName), String.valueOf(fingerprint1), String.valueOf(seedClient)};
         Client03 server1 = new Client03(server1IP, server1Port, data);
 
-        data = new String[]{Helper.strArrToStr(columnName), String.valueOf(fingerprint2)};
+        data = new String[]{"and", Helper.strArrToStr(columnName), String.valueOf(fingerprint2)};
         Client03 server2 = new Client03(server2IP, server2Port, data);
 
         // sending data to each server

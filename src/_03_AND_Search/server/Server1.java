@@ -23,9 +23,8 @@ import constant.*;
 public class Server1 {
 
     // query string to get server data from database
-    private static final String query_base1 = "select ";
-
-    private static final String query_base2 = " from " + Helper.getDatabaseName() + "." + Helper.getTableName() + "_SERVERTABLE1 where rowID > ";
+    private static final String query_base1_03 = "select ";
+    private static final String query_base2_03 = " from " + Helper.getDatabaseName() + "." + Helper.getTableName() + "_SERVERTABLE1 where rowID > ";
 
     // the number of row of tpch.lineitem considered
     private static int numRows;
@@ -37,20 +36,20 @@ public class Server1 {
     // the fingerprintPrimeNumber value i.e value of r which is taken as 43 in our case
     private static int fingerprintPrimeNumber;
     // the fingerprint value generated for server1
-    private static int fingerprint1;
+    private static int fingerprint1_03;
     // stores seed value for server for random number generation
     private static int seedServer;
     // stores seed value for client for random number generation
     private static int seedClient;
     // the list of name of the tpch.lineitem column to search over
-    private static String[] columnName;
+    private static String[] columnName_03;
 
     // stores result after server processing
-    private static int[] result;
-    private static HashMap<Integer, Long> hashMap = new HashMap<>();
+    private static int[] result_03;
+    private static HashMap<Integer, Long> hashMap_03 = new HashMap<>();
 
     private static ArrayList<Instant> timestamps = new ArrayList<>();
-    private static final Logger log = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+    private static final Logger log_03 = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     // stores port for server
     private static int serverPort;
@@ -59,16 +58,16 @@ public class Server1 {
     // stores IP for combiner
     private static String combinerIP;
 
-    static Map<String, Integer> tableMetadata = null;
+    static Map<String, Integer> tableMetadata_03 = null;
 
-    private static final int portIncrement = 20;
+    private static final int portIncrement = 0;
 
     // operation performed by each thread
-    private static class ParallelTask implements Runnable {
+    private static class ParallelTask_03 implements Runnable {
 
         private final int threadNum;
 
-        public ParallelTask(int threadNum) {
+        public ParallelTask_03(int threadNum) {
             this.threadNum = threadNum;
         }
 
@@ -79,7 +78,7 @@ public class Server1 {
             try {
                 con = Helper.getConnection();
             } catch (SQLException ex) {
-                log.log(Level.SEVERE, ex.getMessage());
+                log_03.log(Level.SEVERE, ex.getMessage());
             }
             int startRow = (threadNum - 1) * numRowsPerThread;
             int endRow = startRow + numRowsPerThread;
@@ -89,9 +88,9 @@ public class Server1 {
                 Random randSeedClient = new Random(seedClient);
 
                 // Make a copy of the column names and add the "A_" prefix to the column names
-                String [] columnNameCopy = new String[columnName.length];
-                for (int i = 0; i < columnName.length; i++) {
-                    columnNameCopy[i] = "A_" + columnName[i];
+                String [] columnNameCopy = new String[columnName_03.length];
+                for (int i = 0; i < columnName_03.length; i++) {
+                    columnNameCopy[i] = "A_" + columnName_03[i];
                 }
 
 
@@ -101,7 +100,7 @@ public class Server1 {
                 //System.out.println("\n");
 
 
-                String query = query_base1 + columns + query_base2 + startRow + " LIMIT " + numRowsPerThread;
+                String query = query_base1_03 + columns + query_base2_03 + startRow + " LIMIT " + numRowsPerThread;
                 Statement stmt = con.createStatement();
                 ResultSet rs = stmt.executeQuery(query);
                 int prgServer, prgClient;
@@ -117,48 +116,48 @@ public class Server1 {
                             Constants.getMinRandomBound()) + Constants.getMinRandomBound();
 
                     // process for each column of string or numeric type
-                    for (int k = 0; k < columnName.length; k++) {
+                    for (int k = 0; k < columnName_03.length; k++) {
 
-                        int col_type = getColumnType(columnName[k]);
+                        int col_type = getColumnType_03(columnName_03[k]);
 
                         if (col_type == 0) { // int columns
 
-                            if (!hashMap.containsKey(start)) {
-                                hashMap.put(start, Helper.mod((long) Math.pow(fingerprintPrimeNumber, start)));
+                            if (!hashMap_03.containsKey(start)) {
+                                hashMap_03.put(start, Helper.mod((long) Math.pow(fingerprintPrimeNumber, start)));
                             }
-                            result[i] = (int) Helper.mod(result[i] +
-                                    Helper.mod(hashMap.get(start) * rs.getLong("A_" + columnName[k])));
+                            result_03[i] = (int) Helper.mod(result_03[i] +
+                                    Helper.mod(hashMap_03.get(start) * rs.getLong("A_" + columnName_03[k])));
                             start++;
                         } else { // string columns
-                            rowSplit = rs.getString("A_" + columnName[k]).split("\\|");
+                            rowSplit = rs.getString("A_" + columnName_03[k]).split("\\|");
 
                             for (int j = 0; j < rowSplit.length; j++) {
-                                if (!hashMap.containsKey(start)) {
-                                    hashMap.put(start, Helper.mod((long) Math.pow(fingerprintPrimeNumber, start)));
+                                if (!hashMap_03.containsKey(start)) {
+                                    hashMap_03.put(start, Helper.mod((long) Math.pow(fingerprintPrimeNumber, start)));
                                 }
-                                result[i] = (int) Helper.mod(result[i] +
-                                        Helper.mod(hashMap.get(start) * Integer.parseInt(rowSplit[j])));
+                                result_03[i] = (int) Helper.mod(result_03[i] +
+                                        Helper.mod(hashMap_03.get(start) * Integer.parseInt(rowSplit[j])));
                                 start++;
                             }     
                         }
                     }
-                    result[i] = (int) Helper.mod(Helper.mod(Helper.mod((long) result[i] - fingerprint1)
+                    result_03[i] = (int) Helper.mod(Helper.mod(Helper.mod((long) result_03[i] - fingerprint1_03)
                             * prgServer) + prgClient);
                 }
             } catch (SQLException ex) {
-                log.log(Level.SEVERE, ex.getMessage());
+                log_03.log(Level.SEVERE, ex.getMessage());
             }
         }
     }
 
     // executing server operation over threads
-    private static void doWork(String[] data) {
+    private static void doWork_03(String[] data) {
 
-        columnName = Helper.strToStrArr(data[0]);
-        fingerprint1 = Integer.parseInt(data[1]);
+        columnName_03 = Helper.strToStrArr(data[0]);
+        fingerprint1_03 = Integer.parseInt(data[1]);
         seedClient = Integer.parseInt(data[2]);
-        result = new int[numRows];
-        hashMap = new HashMap<>();
+        result_03 = new int[numRows];
+        hashMap_03 = new HashMap<>();
 
 
         // the list containing all the threads
@@ -168,7 +167,7 @@ public class Server1 {
         int threadNum;
         for (int i = 0; i < numThreads; i++) {
             threadNum = i + 1;
-            threadList.add(new Thread(new ParallelTask(threadNum), "Thread" + threadNum));
+            threadList.add(new Thread(new ParallelTask_03(threadNum), "Thread" + threadNum));
         }
 
         // start all threads
@@ -181,7 +180,7 @@ public class Server1 {
             try {
                 thread.join();
             } catch (InterruptedException ex) {
-                log.log(Level.SEVERE, ex.getMessage());
+                log_03.log(Level.SEVERE, ex.getMessage());
             }
         }
     }
@@ -206,12 +205,12 @@ public class Server1 {
                 // reading the data sent by Client
                 inFromClient = new ObjectInputStream(clientSocket.getInputStream());
                 dataReceived = (String[]) inFromClient.readObject();
-                doWork(dataReceived);
+                doWork_03(dataReceived);
 
                 // sending the processed data to Combiner
                 combinerSocket = new Socket(combinerIP, combinerPort);
                 outToCombiner = new ObjectOutputStream(combinerSocket.getOutputStream());
-                outToCombiner.writeObject(result);
+                outToCombiner.writeObject(result_03);
                 combinerSocket.close();
 
                 // calculating timestamps
@@ -219,7 +218,7 @@ public class Server1 {
 //                System.out.println(Helper.getProgramTimes(timestamps));
 //                log.log(Level.INFO, "Total Server1 time:" + Helper.getProgramTimes(timestamps));
             } catch (IOException | ClassNotFoundException ex) {
-                log.log(Level.SEVERE, ex.getMessage());
+                log_03.log(Level.SEVERE, ex.getMessage());
             }
         }
     }
@@ -240,7 +239,7 @@ public class Server1 {
                 new SocketCreation(socket).run();
             } while (true);
         } catch (IOException ex) {
-            log.log(Level.SEVERE, ex.getMessage());
+            log_03.log(Level.SEVERE, ex.getMessage());
         }
     }
 
@@ -266,11 +265,10 @@ public class Server1 {
     }
 
     
-
-    private static int getColumnType(String col_name){
-        if(tableMetadata == null)
-            tableMetadata = Helper.getColumnList();
-        return tableMetadata.get(col_name.toLowerCase());
+    private static int getColumnType_03(String col_name){
+        if(tableMetadata_03 == null)
+            tableMetadata_03 = Helper.getColumnList();
+        return tableMetadata_03.get(col_name.toLowerCase());
     }
 
     // performs server task required to process client query
