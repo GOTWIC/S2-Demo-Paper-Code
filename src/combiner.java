@@ -3,6 +3,7 @@ package src;
 import constant.*;
 import utility.Helper;
 import java.io.*;
+import java.math.BigInteger;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.time.Instant;
@@ -38,9 +39,7 @@ public class combiner extends Thread {
     private static ArrayList<Instant> timestamps = new ArrayList<>();
     private static List<SocketCreation> socketCreations = new ArrayList<>();
     private static final ExecutorService threadPool = Executors.newFixedThreadPool(Constants.getThreadPoolSize());
-
     private int protocol = 0;
-
 
     // ---------------- 01 COMBINER GLOBALS ---------------- \\
 
@@ -76,6 +75,20 @@ public class combiner extends Thread {
     private static int[] server2_03;
 
     private static final Logger log_03 = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+
+
+    // ---------------- 04 COMBINER GLOBALS ---------------- \\
+
+    private static List<BigInteger[][]> serverResult_04 = Collections.synchronizedList(new ArrayList<>());
+    private static BigInteger[][] result_04;// stores server data
+    private static BigInteger[][] server1_04;
+    private static BigInteger[][] server2_04;
+    private static BigInteger[][] server3_04;
+    private static BigInteger[][] server4_04;
+    private static int serverCount_04;
+    private static boolean flag_04 = true;
+
+    private static final Logger log_04 = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     // ---------------- 01 COMBINER CODE ---------------- \\
 
@@ -236,6 +249,106 @@ public class combiner extends Thread {
         }
    
 
+    // ---------------- 04 COMBINER CODE ---------------- \\
+
+    // shamir secret share data interpolation
+    private static BigInteger langrangesInterpolatation_04(BigInteger share[]) {
+        return switch (share.length) {
+            case 2 -> Helper.mod(Helper.mod(BigInteger.valueOf(2).multiply(share[0])).subtract(share[1]));
+            case 3 -> Helper.mod(Helper.mod(BigInteger.valueOf(3).multiply(share[0])).subtract(Helper.mod(BigInteger.valueOf(3).multiply(share[1]))).add(share[2]));
+            case 4 -> 
+                    Helper.mod(
+                        Helper.mod(
+                            Helper.mod(BigInteger.valueOf(4).multiply(share[0]))
+                                .subtract(Helper.mod(BigInteger.valueOf(6).multiply(share[1])))
+                                .add(Helper.mod(BigInteger.valueOf(4).multiply(share[2])))
+                                .subtract(Helper.mod(share[3]))
+                        )
+                    );
+            default -> BigInteger.valueOf(0);
+        };
+    }
+
+    // operation performed by each thread
+    private static class ParallelTask_04 implements Runnable {
+        private int threadNum;
+
+        public ParallelTask_04(int threadNum) {
+            this.threadNum = threadNum;
+        }
+
+        @Override
+        public void run() {
+            int startRow = (threadNum - 1) * numRowsPerThread;
+            int endRow = startRow + numRowsPerThread;
+
+            // adding data received from the server
+
+            BigInteger[] share1 = null, share2;
+            for (int i = startRow; i < endRow; i++) {
+                if (server1_04.length > 2) {
+                    share1 = new BigInteger[]{server1_04[0][i], server2_04[0][i], server3_04[0][i]};
+                    share2 = new BigInteger[]{server1_04[1][i], server2_04[1][i], server3_04[1][i]};
+                    result_04[0][i] = langrangesInterpolatation_04(share1);
+                    result_04[1][i] = langrangesInterpolatation_04(share2);
+                } else { 
+                    switch (serverCount_04) {
+                        case 2 -> share1 = new BigInteger[]{server1_04[0][i], server2_04[0][i]};
+                        case 3 -> share1 = new BigInteger[]{server1_04[0][i], server2_04[0][i], server3_04[0][i]};
+                        case 4 -> share1 = new BigInteger[]{server1_04[0][i], server2_04[0][i], server3_04[0][i], server4_04[0][i]};
+                    }
+                    result_04[0][i] = langrangesInterpolatation_04(share1);
+                }
+            }
+        }
+    }
+
+    // working on server data to process for client
+    private static void doWork_04() {
+        // The list containing all the threads
+
+
+        // extracting each server data from data received
+        for (int i = 0; i < serverResult_04.size(); i++) {
+            switch (serverResult_04.get(i)[serverResult_04.get(i).length - 1][0].intValue()) {
+                case 1 -> server1_04 = serverResult_04.get(i);
+                case 2 -> server2_04 = serverResult_04.get(i);
+                case 3 -> server3_04 = serverResult_04.get(i);
+                case 4 -> server4_04 = serverResult_04.get(i);
+            }
+        }
+
+        int resultDim = 1;
+        if (server1_04.length > 2)
+            resultDim = 2;
+        result_04 = new BigInteger[resultDim][numRows];
+
+        List<Thread> threadList = new ArrayList<>();
+
+        // create threads and add them to threadlist
+        int threadNum;
+        for (int i = 0; i < numThreads; i++) {
+            threadNum = i + 1;
+            threadList.add(new Thread(new ParallelTask_04(threadNum), "Thread" + threadNum));
+        }
+
+        // start all threads
+        for (int i = 0; i < numThreads; i++) {
+
+            threadList.get(i).start();
+        }
+
+        // wait for all threads to finish
+        for (Thread thread : threadList) {
+            try {
+                thread.join();
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    
     // ---------------- UNIVERSAL CODE ---------------- \\
 
 

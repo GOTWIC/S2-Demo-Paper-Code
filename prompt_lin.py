@@ -2,7 +2,7 @@ from subprocess import Popen
 import time
 from configobj import ConfigObj
 
-basepath = "/home/ubuntu/S2-VLDB-2023-main"
+#basepath = "/home/ubuntu/S2-VLDB-2023-main"
 classPath = ".:mysqlConnector/mysql-connector-java-8.0.29.jar"
 
 # Compile
@@ -43,7 +43,7 @@ def compile_scripts():
     Popen("javac -cp " + classPath + " src/*.java", shell=True)
     
 
-
+# DO NOT USE
 def run_scripts():
     serverCounts = [2,2,2,4,4]
     folderNames = ["_01_oneColumnNumberSearch", "_02_oneColumnStringSearch", "_03_AND_Search", "_04_OR_Search", "_05_Multiplicative_Row_Fetch"]
@@ -55,6 +55,14 @@ def run_scripts():
             Popen("java -cp " + classPath + " src/" + folderNames[i] + "/server/Server" + str(j+1) + " > prompt_logs/s" + str(serverCounter) + ".txt", shell = True)
             serverCounter += 1
         Popen("java -cp " + classPath + " src/" + folderNames[i] + "/combiner/Combiner > prompt_logs/comb" + str(i)  + ".txt", shell = True)
+
+
+# USE THIS ONE
+def run_scripts_test():
+    # PLEASE USE PATHS ACCORDINGLY HERE
+    Popen("javac -cp " + classPath + " server1 > prompt_logs/s1.txt ", shell=True)
+    Popen("javac -cp " + classPath + " server2 > prompt_logs/s1.txt ", shell=True)
+    Popen("javac -cp " + classPath + " combiner > prompt_logs/comb.txt ", shell=True)
 
 def getRowCount(req):
         f = open("config/encryptedSchemas.properties", "r")
@@ -85,7 +93,7 @@ def updateConfigFiles(db,tbl,r):
         #f.close()
 
 compile_scripts()
-#run_scripts()
+run_scripts_test()
 
 Popen("clear")
 

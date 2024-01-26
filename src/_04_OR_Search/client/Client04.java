@@ -79,7 +79,7 @@ public class Client04 extends Thread {
 
     static Map<String, Integer> tableMetadata = new HashMap<String, Integer>();
 
-    private static final int portIncrement = 30;
+    private static final int portIncrement = 0;
 
 
     // default constructor
@@ -247,22 +247,22 @@ public class Client04 extends Thread {
         // server data preparation
         String[] data;
 
-        data = new String[]{String.valueOf(numServers)};
+        data = new String[]{"or", String.valueOf(numServers)};
         combiner = new Client04(combinerIP, combinerPort, data);
 
-        data = new String[]{Helper.strArrToStr(columnName), Helper.strArrToStr(helper(0)), String.valueOf(seedClient)};
+        data = new String[]{"or", Helper.strArrToStr(columnName), Helper.strArrToStr(helper(0)), String.valueOf(seedClient)};
         server1 = new Client04(server1IP, server1Port, data);
 
-        data = new String[]{Helper.strArrToStr(columnName), Helper.strArrToStr(helper(1)), String.valueOf(seedClient)};
+        data = new String[]{"or", Helper.strArrToStr(columnName), Helper.strArrToStr(helper(1)), String.valueOf(seedClient)};
         server2 = new Client04(server2IP, server2Port, data);
 
         if (numServers > 2) {
-            data = new String[]{Helper.strArrToStr(columnName), Helper.strArrToStr(helper(2)), String.valueOf(seedClient)};
+            data = new String[]{"or", Helper.strArrToStr(columnName), Helper.strArrToStr(helper(2)), String.valueOf(seedClient)};
             server3 = new Client04(server3IP, server3Port, data);
         }
 
         if (numServers > 3) {
-            data = new String[]{Helper.strArrToStr(columnName), Helper.strArrToStr(helper(3)), String.valueOf(seedClient)};
+            data = new String[]{"or", Helper.strArrToStr(columnName), Helper.strArrToStr(helper(3)), String.valueOf(seedClient)};
             server4 = new Client04(server4IP, server4Port, data);
         }
 

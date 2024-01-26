@@ -79,7 +79,7 @@ public class Client05 extends Thread {
     // the name of file storing the query result under result/ folder
     private static final String resultFileName = "_05_Multiplicative_Row_Fetch";
 
-    private static final int portIncrement = 40;
+    private static final int portIncrement = 0;
 
     private static String sum_col = "def";
 
@@ -194,16 +194,16 @@ public class Client05 extends Thread {
 
         // server data preparation
         String[] data;
-        data = new String[]{Helper.arrToStr(server1RowShare), Helper.arrToStr(server1ColShare), String.valueOf(seedClient)};
+        data = new String[]{"row", Helper.arrToStr(server1RowShare), Helper.arrToStr(server1ColShare), String.valueOf(seedClient)};
         server1 = new Client05(server1IP, server1Port, data);
 
-        data = new String[]{Helper.arrToStr(server2RowShare), Helper.arrToStr(server2ColShare), String.valueOf(seedClient)};
+        data = new String[]{"row", Helper.arrToStr(server2RowShare), Helper.arrToStr(server2ColShare), String.valueOf(seedClient)};
         server2 = new Client05(server2IP, server2Port, data);
 
-        data = new String[]{Helper.arrToStr(server3RowShare), Helper.arrToStr(server3ColShare), String.valueOf(seedClient)};
+        data = new String[]{"row", Helper.arrToStr(server3RowShare), Helper.arrToStr(server3ColShare), String.valueOf(seedClient)};
         server3 = new Client05(server3IP, server3Port, data);
 
-        data = new String[]{Helper.arrToStr(server4RowShare), Helper.arrToStr(server4ColShare), String.valueOf(seedClient)};
+        data = new String[]{"row", Helper.arrToStr(server4RowShare), Helper.arrToStr(server4ColShare), String.valueOf(seedClient)};
         server4 = new Client05(server4IP, server4Port, data);
 
 

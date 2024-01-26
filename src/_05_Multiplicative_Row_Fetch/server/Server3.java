@@ -23,7 +23,7 @@ import java.math.BigInteger;
 public class Server3 {
 
     // query string to get server data from database
-    private static final String query_base = " from " + Helper.getDatabaseName() + "." + Helper.getTableName() + "_SERVERTABLE3 where rowID > ";
+    private static final String query_base_05 = " from " + Helper.getDatabaseName() + "." + Helper.getTableName() + "_SERVERTABLE3 where rowID > ";
 
 
 
@@ -34,24 +34,24 @@ public class Server3 {
     // the number of row per thread
     private static int numRowsPerThread;
 
-    private static BigInteger[][][][] col_sum;
-    private static BigInteger[][] total_sum;
+    private static BigInteger[][][][] col_sum_05;
+    private static BigInteger[][] total_sum_05;
 
     // the total number of row ids requested
-    private static int querySize;
+    private static int querySize_05;
     // the size of filter based on number of rows considered which is sqrt(numRows)
-    private static int filter_size;
+    private static int filter_size_05;
     // stores the row filter for row ids value
-    private static int[][] row_filter;
+    private static int[][] row_filter_05;
     // stores the column filter for row ids value
-    private static int[][] col_filter;
+    private static int[][] col_filter_05;
     // stores seed value for client for random number generation
-    private static int seedClient;
+    private static int seedClient_05;
 
     // stores result after server processing
-    private static BigInteger[][] result;
+    private static BigInteger[][] result_05;
     private static ArrayList<Instant> timestamps = new ArrayList<>();
-    private static final Logger log = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+    private static final Logger log_05 = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     // stores port for server
     private static int serverPort;
@@ -60,18 +60,18 @@ public class Server3 {
     // stores IP for combiner
     private static String combinerIP;
 
-    private static int numCols; 
-    private static String columnNames = "";
-    private static String[] columnNamesArr;
+    private static int numCols_05; 
+    private static String columnNames_05 = "";
+    private static String[] columnNamesArr_05;
 
     private static final int portIncrement = 40;
 
     // operation performed by each thread
-    private static class ParallelTask implements Runnable {
+    private static class ParallelTask_05 implements Runnable {
 
         private final int threadNum;
 
-        public ParallelTask(int threadNum) {
+        public ParallelTask_05(int threadNum) {
             this.threadNum = threadNum;
         }
 
@@ -83,7 +83,7 @@ public class Server3 {
             try {
                 con = Helper.getConnection();
             } catch (SQLException ex) {
-                log.log(Level.SEVERE, ex.getMessage());
+                log_05.log(Level.SEVERE, ex.getMessage());
             }
 
             int startRow = (threadNum - 1) * numRowsPerThread;
@@ -91,7 +91,7 @@ public class Server3 {
 
             try {
 
-                String query = "select " + columnNames  + query_base + startRow + " LIMIT " + numRowsPerThread;                Statement stmt = con.createStatement();
+                String query = "select " + columnNames_05  + query_base_05 + startRow + " LIMIT " + numRowsPerThread;                Statement stmt = con.createStatement();
                 ResultSet rs = stmt.executeQuery(query);
 
                 // performing server operation on each row of the database
@@ -100,60 +100,60 @@ public class Server3 {
                     if(i < numRows)
                         rs.next();
                     // multiplication with the row filter for each column value
-                    for (int j = 0; j < querySize; j++) {
-                        BigInteger temp = BigInteger.valueOf(row_filter[j][i / filter_size]);
-                        for(int k = 0; k < numCols; k++){
+                    for (int j = 0; j < querySize_05; j++) {
+                        BigInteger temp = BigInteger.valueOf(row_filter_05[j][i / filter_size_05]);
+                        for(int k = 0; k < numCols_05; k++){
                             if(i < numRows)
-                                st_val = rs.getString(columnNamesArr[k]);
+                                st_val = rs.getString(columnNamesArr_05[k]);
                             else
                                 st_val = "0";
-                            col_sum[k][j][threadNum - 1][i % filter_size] = Helper.mod(col_sum[k][j][threadNum - 1][i % filter_size].add(Helper.mod(new BigInteger(st_val)).multiply(temp)));
+                            col_sum_05[k][j][threadNum - 1][i % filter_size_05] = Helper.mod(col_sum_05[k][j][threadNum - 1][i % filter_size_05].add(Helper.mod(new BigInteger(st_val)).multiply(temp)));
                         }
                     }
                 }
 
-                for (int i = 0; i < querySize; i++) {
+                for (int i = 0; i < querySize_05; i++) {
                     // multiplication with the col filter for each column value
-                    for (int j = 0; j < filter_size; j++) {
-                        for(int k = 0; k < numCols; k++){
-                            col_sum[k][i][threadNum - 1][j] = Helper.mod(col_sum[k][i][threadNum - 1][j].multiply(BigInteger.valueOf(col_filter[i][j])));
-                            total_sum[k][i] = Helper.mod(total_sum[k][i].add(col_sum[k][i][threadNum - 1][j]));
+                    for (int j = 0; j < filter_size_05; j++) {
+                        for(int k = 0; k < numCols_05; k++){
+                            col_sum_05[k][i][threadNum - 1][j] = Helper.mod(col_sum_05[k][i][threadNum - 1][j].multiply(BigInteger.valueOf(col_filter_05[i][j])));
+                            total_sum_05[k][i] = Helper.mod(total_sum_05[k][i].add(col_sum_05[k][i][threadNum - 1][j]));
                         }
                     }
                 }
             } catch (SQLException ex) {
-                log.log(Level.SEVERE, ex.getMessage());
+                log_05.log(Level.SEVERE, ex.getMessage());
             }
             try {
                 con.close();
             } catch (SQLException ex) {
-                log.log(Level.SEVERE, ex.getMessage());
+                log_05.log(Level.SEVERE, ex.getMessage());
             }
         }
     }
 
     // executing server operation over threads
-    private static void doWork(String[] data) {
+    private static void doWork_05(String[] data) {
 
-        row_filter = Helper.strToStrArr1(data[0]);
-        col_filter = Helper.strToStrArr1(data[1]);
-        seedClient = Integer.parseInt(data[2]);
+        row_filter_05 = Helper.strToStrArr1(data[0]);
+        col_filter_05 = Helper.strToStrArr1(data[1]);
+        seedClient_05 = Integer.parseInt(data[2]);
 
-        querySize = row_filter.length;
-        result = new BigInteger[querySize + 1][numCols];
+        querySize_05 = row_filter_05.length;
+        result_05 = new BigInteger[querySize_05 + 1][numCols_05];
 
-        col_sum = new BigInteger[numCols][querySize][numThreads][filter_size];
-        total_sum = new BigInteger[numCols][querySize];
+        col_sum_05 = new BigInteger[numCols_05][querySize_05][numThreads][filter_size_05];
+        total_sum_05 = new BigInteger[numCols_05][querySize_05];
 
         // initialize col_sum and total_sum to 0
-        for(int i = 0; i < numCols; i++){
-            for(int j = 0; j < querySize; j++){
+        for(int i = 0; i < numCols_05; i++){
+            for(int j = 0; j < querySize_05; j++){
                 for(int k = 0; k < numThreads; k++){
-                    for(int l = 0; l < filter_size; l++){
-                        col_sum[i][j][k][l] = BigInteger.valueOf(0);
+                    for(int l = 0; l < filter_size_05; l++){
+                        col_sum_05[i][j][k][l] = BigInteger.valueOf(0);
                     }
                 }
-                total_sum[i][j] = BigInteger.valueOf(0);
+                total_sum_05[i][j] = BigInteger.valueOf(0);
             }
         }
 
@@ -164,7 +164,7 @@ public class Server3 {
         int threadNum;
         for (int i = 0; i < numThreads; i++) {
             threadNum = i + 1;
-            threadList.add(new Thread(new ParallelTask(threadNum), "Thread" + threadNum));
+            threadList.add(new Thread(new ParallelTask_05(threadNum), "Thread" + threadNum));
         }
 
         // start all threads
@@ -177,22 +177,22 @@ public class Server3 {
             try {
                 thread.join();
             } catch (InterruptedException ex) {
-                log.log(Level.SEVERE, ex.getMessage());
+                log_05.log(Level.SEVERE, ex.getMessage());
             }
         }
 
-        Random randSeedClient = new Random(seedClient);
+        Random randSeedClient = new Random(seedClient_05);
         // adding random value before sending to Client
-        for (int i = 0; i < querySize; i++) {
+        for (int i = 0; i < querySize_05; i++) {
             BigInteger randClient = BigInteger.valueOf(randSeedClient.nextInt(Constants.getMaxRandomBound() - Constants.getMinRandomBound())
                     + Constants.getMinRandomBound());
 
-            for(int j = 0; j < numCols; j++){
-                result[i][j] = Helper.mod(total_sum[j][i].add(randClient));
+            for(int j = 0; j < numCols_05; j++){
+                result_05[i][j] = Helper.mod(total_sum_05[j][i].add(randClient));
             }
         }
 
-        result[querySize][0] = BigInteger.valueOf(3);
+        result_05[querySize_05][0] = BigInteger.valueOf(3);
     }
 
     // performing operations on data received over socket
@@ -215,12 +215,12 @@ public class Server3 {
                 // reading the data sent by Client
                 inFromClient = new ObjectInputStream(clientSocket.getInputStream());
                 dataReceived = (String[]) inFromClient.readObject();
-                doWork(dataReceived);
+                doWork_05(dataReceived);
 
                 // sending the processed data to Combiner
                 combinerSocket = new Socket(combinerIP, combinerPort);
                 outToCombiner = new ObjectOutputStream(combinerSocket.getOutputStream());
-                outToCombiner.writeObject(result);
+                outToCombiner.writeObject(result_05);
                 combinerSocket.close();
 
                 // calculating timestamps
@@ -228,7 +228,7 @@ public class Server3 {
 //                System.out.println(Helper.getProgramTimes(timestamps));
 //                log.log(Level.INFO, "Total Server3 time:" + Helper.getProgramTimes(timestamps));
             } catch (IOException | ClassNotFoundException ex) {
-                log.log(Level.SEVERE, ex.getMessage());
+                log_05.log(Level.SEVERE, ex.getMessage());
             }
         }
     }
@@ -249,7 +249,7 @@ public class Server3 {
                 new SocketCreation(socket).run();
             } while (true);
         } catch (IOException ex) {
-            log.log(Level.SEVERE, ex.getMessage());
+            log_05.log(Level.SEVERE, ex.getMessage());
         }
     }
 
@@ -272,12 +272,12 @@ public class Server3 {
         combinerPort = Integer.parseInt(properties.getProperty("combinerPort")) + portIncrement;
         combinerIP = properties.getProperty("combinerIP");
 
-        filter_size = (int) Math.ceil(Math.sqrt(numRows));
+        filter_size_05 = (int) Math.ceil(Math.sqrt(numRows));
 
-        setEnv();
+        setEnv_05();
     }
 
-    private static void setEnv(){
+    private static void setEnv_05(){
         Map<String, Integer> tableMetadata = new HashMap<String, Integer>();
         // Open csv file at "data/metadata/table_metadata.csv" and load into tableMetaData hasmap
         String csvFile = "data/metadata/table_metadata.csv";
@@ -293,12 +293,12 @@ public class Server3 {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        numCols = tableMetadata.size();
+        numCols_05 = tableMetadata.size();
         for (Map.Entry<String, Integer> entry : tableMetadata.entrySet()) {
-            columnNames += "M_" + entry.getKey() + ",";
+            columnNames_05 += "M_" + entry.getKey() + ",";
         }
-        columnNames = columnNames.substring(0, columnNames.length() - 1);
-        columnNamesArr = columnNames.split(",");
+        columnNames_05 = columnNames_05.substring(0, columnNames_05.length() - 1);
+        columnNamesArr_05 = columnNames_05.split(",");
     }
 
     // performs server task required to process client query
