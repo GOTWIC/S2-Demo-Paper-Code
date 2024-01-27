@@ -194,6 +194,7 @@ public class Client05 extends Thread {
 
         // server data preparation
         String[] data;
+
         data = new String[]{"row", Helper.arrToStr(server1RowShare), Helper.arrToStr(server1ColShare), String.valueOf(seedClient)};
         server1 = new Client05(server1IP, server1Port, data);
 
@@ -205,6 +206,11 @@ public class Client05 extends Thread {
 
         data = new String[]{"row", Helper.arrToStr(server4RowShare), Helper.arrToStr(server4ColShare), String.valueOf(seedClient)};
         server4 = new Client05(server4IP, server4Port, data);
+
+        // print server1RowShare and server1ColShare
+        //System.out.println(Arrays.deepToString(server1RowShare));
+        //System.out.println(Arrays.deepToString(server1ColShare));
+
 
 
         // sending data to each server

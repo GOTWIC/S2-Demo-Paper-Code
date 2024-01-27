@@ -50,6 +50,8 @@ def run_scripts():
 def run_scripts_test():
     Popen("java -cp \"" + classPath + "\" src/" + "server1" + " > prompt_logs/s" + "1" + ".txt", shell = False)
     Popen("java -cp \"" + classPath + "\" src/" + "server2" + " > prompt_logs/s" + "2" + ".txt", shell = False)
+    Popen("java -cp \"" + classPath + "\" src/" + "server3" + " > prompt_logs/s" + "3" + ".txt", shell = False)
+    Popen("java -cp \"" + classPath + "\" src/" + "server4" + " > prompt_logs/s" + "4s  " + ".txt", shell = False)
     Popen("java -cp \"" + classPath + "\" src/" + "combiner" + " > prompt_logs/comb1" + ".txt", shell = False)
 
 def getRowCount(req):

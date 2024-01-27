@@ -21,10 +21,10 @@ import java.math.BigInteger;
 
 public class Combiner extends Thread {
     // stores result received from servers
-    private static List<BigInteger[][]> serverResult = Collections.synchronizedList(new ArrayList<>());
+    private static List<BigInteger[][]> serverResult_05 = Collections.synchronizedList(new ArrayList<>());
     private static final ExecutorService threadPool = Executors.newFixedThreadPool(Constants.getThreadPoolSize());
     private static List<SocketCreation> socketCreations = new ArrayList<>();
-    private static BigInteger[][] result;
+    private static BigInteger[][] result_05;
 
     // stores port value for combiner
     private static int combinerPort;
@@ -34,21 +34,21 @@ public class Combiner extends Thread {
     private static String clientIP;
 
     // stores server data
-    private static BigInteger[][] server1;
-    private static BigInteger[][] server2;
-    private static BigInteger[][] server3;
-    private static BigInteger[][] server4;
-    private static int querySize;
+    private static BigInteger[][] server1_05;
+    private static BigInteger[][] server2_05;
+    private static BigInteger[][] server3_05;
+    private static BigInteger[][] server4_05;
+    private static int querySize_05;
 
-    private static int numCols;
+    private static int numCols_05;
 
-    private static final Logger log = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+    private static final Logger log_05 = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
     private static ArrayList<Instant> timestamps = new ArrayList<>();
 
     private static final int portIncrement = 40;
 
     // shamir secret share data interpolation
-    private static BigInteger langrangesInterpolatation(BigInteger share[]) {
+    private static BigInteger langrangesInterpolatation_05(BigInteger share[]) {
         return switch (share.length) {
             case 2 -> Helper.mod(Helper.mod(BigInteger.valueOf(2).multiply(share[0])).subtract(share[1]));
             case 3 -> Helper.mod(Helper.mod(BigInteger.valueOf(3).multiply(share[0])).subtract(Helper.mod(BigInteger.valueOf(3).multiply(share[1]))).add(share[2]));
@@ -66,33 +66,33 @@ public class Combiner extends Thread {
     }
 
     // working on server data to process for client
-    private static void doWork() {
+    private static void doWork_05() {
 
-        numCols = serverResult.get(0)[0].length;
+        numCols_05 = serverResult_05.get(0)[0].length;
         // extracting server based information
 
         // TODO: what is serverResult.size();
-        for (int i = 0; i < serverResult.size(); i++) {
-            switch (serverResult.get(i)[serverResult.get(i).length - 1][0].intValue()) {
-                case 1 -> server1 = serverResult.get(i);
-                case 2 -> server2 = serverResult.get(i);
-                case 3 -> server3 = serverResult.get(i);
-                case 4 -> server4 = serverResult.get(i);
+        for (int i = 0; i < serverResult_05.size(); i++) {
+            switch (serverResult_05.get(i)[serverResult_05.get(i).length - 1][0].intValue()) {
+                case 1 -> server1_05 = serverResult_05.get(i);
+                case 2 -> server2_05 = serverResult_05.get(i);
+                case 3 -> server3_05 = serverResult_05.get(i);
+                case 4 -> server4_05 = serverResult_05.get(i);
             }
         }
 
-        querySize = server1.length - 1;
-        result = new BigInteger[querySize][numCols];
+        querySize_05 = server1_05.length - 1;
+        result_05 = new BigInteger[querySize_05][numCols_05];
 
         // interpolating values from shares
         BigInteger[] share;
-        for (int i = 0; i < querySize; i++) {
+        for (int i = 0; i < querySize_05; i++) {
 
             ////System.out.println("Server Length 2: " + server1[0].length);
 
-            for(int j = 0; j < server1[0].length; j++){
-                share = new BigInteger[]{server1[i][j], server2[i][j], server3[i][j], server4[i][j]};
-                result[i][j] = (langrangesInterpolatation(share));
+            for(int j = 0; j < server1_05[0].length; j++){
+                share = new BigInteger[]{server1_05[i][j], server2_05[i][j], server3_05[i][j], server4_05[i][j]};
+                result_05[i][j] = (langrangesInterpolatation_05(share));
             }
 
 
@@ -122,7 +122,7 @@ public class Combiner extends Thread {
             try {
                 // initializing input stream for reading the data
                 inFromServer = new ObjectInputStream(serverSocket.getInputStream());
-                serverResult.add((BigInteger[][]) inFromServer.readObject());
+                serverResult_05.add((BigInteger[][]) inFromServer.readObject());
             } catch (IOException ex) {
                 Logger.getLogger(Combiner.class.getName()).log(Level.SEVERE, null, ex);
             } catch (ClassNotFoundException e) {
@@ -161,18 +161,18 @@ public class Combiner extends Thread {
                     }
                     for (Future<?> future : serverJobs)
                         future.get();
-                    doWork();
+                    doWork_05();
                     // sending data from the client
                     clientSocket = new Socket(clientIP, clientPort);
                     ObjectOutputStream outToClient = new ObjectOutputStream(clientSocket.getOutputStream());
-                    outToClient.writeObject(result);
+                    outToClient.writeObject(result_05);
                     clientSocket.close();
                     // resetting storage variables
                     
                     // CHECK: is serverResult correct?
-                    result = new BigInteger[querySize][numCols];
+                    result_05 = new BigInteger[querySize_05][numCols_05];
                     serverJobs = new ArrayList<>();
-                    serverResult = Collections.synchronizedList(new ArrayList<>());
+                    serverResult_05 = Collections.synchronizedList(new ArrayList<>());
                     socketCreations = new ArrayList<>();
 
                     // calculating the time spent
@@ -182,7 +182,7 @@ public class Combiner extends Thread {
                 }
             }
         } catch (IOException | ExecutionException | InterruptedException ex) {
-            log.log(Level.SEVERE, ex.getMessage());
+            log_05.log(Level.SEVERE, ex.getMessage());
         }
     }
 

@@ -375,26 +375,28 @@ public class server3 {
 
                 if(protocol.equals("or")){
                     doWork_04(dataReceived);
+                    clientSocket.close();
 
                     // sending the processed data to Combiner
-                    combinerSocket = new Socket(combinerIP, combinerPort);
+                    combinerSocket = new Socket(combinerIP, combinerPort + 10);
                     outToCombiner = new ObjectOutputStream(combinerSocket.getOutputStream());
 
                     // New array with an additional row
-                    BigInteger[][] newresult = new BigInteger[result_04.length + 1][result_04[0].length];
+                    //BigInteger[][] newresult = new BigInteger[result_04.length + 1][result_04[0].length];
 
                     // Fill the first row of the new array with the dummy value 4
-                    Arrays.fill(newresult[0], BigInteger.valueOf(4));
+                    //Arrays.fill(newresult[0], BigInteger.valueOf(4));
 
                     // Copy the original array into the new array, starting from the second row
-                    System.arraycopy(result_04, 0, newresult, 1, result_04.length);
+                    //System.arraycopy(result_04, 0, newresult, 1, result_04.length);
 
-                    outToCombiner.writeObject(newresult);
+                    outToCombiner.writeObject(result_04);
                     combinerSocket.close();
                 }
 
                 else if(protocol.equals("row")){
                     doWork_05(dataReceived);
+                    clientSocket.close();
 
                     // sending the processed data to Combiner
                     combinerSocket = new Socket(combinerIP, combinerPort);
@@ -457,6 +459,8 @@ public class server3 {
         serverPort = Integer.parseInt(properties.getProperty("serverPort")) + portIncrement;
         combinerPort = Integer.parseInt(properties.getProperty("combinerPort")) + portIncrement;
         combinerIP = properties.getProperty("combinerIP");
+
+        filter_size_05 = (int) Math.ceil(Math.sqrt(numRows));
 
         setEnv_05();
     }

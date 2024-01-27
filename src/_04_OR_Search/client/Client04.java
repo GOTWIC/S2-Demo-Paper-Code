@@ -365,7 +365,7 @@ public class Client04 extends Thread {
         server4IP = properties.getProperty("server4IP");
         server4Port = Integer.parseInt(properties.getProperty("server4Port")) + portIncrement;
         combinerIP = properties.getProperty("combinerIP");
-        combinerPort = Integer.parseInt(properties.getProperty("combinerPort")) + portIncrement;
+        combinerPort = Integer.parseInt(properties.getProperty("combinerPort")) + portIncrement + 10;
 
         int resultDim = 1;
         if (columnCount > 3)

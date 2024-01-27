@@ -48,7 +48,7 @@ public class Combiner extends Thread {
     private static final Logger log_04 = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
     private static ArrayList<Instant> timestamps = new ArrayList<>();
 
-    private static final int portIncrement = 30;
+    private static final int portIncrement = 0;
 
     // shamir secret share data interpolation
     private static BigInteger langrangesInterpolatation_04(BigInteger share[]) {
@@ -147,6 +147,10 @@ public class Combiner extends Thread {
         }
     }
 
+
+
+
+
     // socket to read data from servers
     class SocketCreation implements Runnable {
 
@@ -236,6 +240,10 @@ public class Combiner extends Thread {
         }
     }
 
+
+
+
+        
     /**
      * It performs initialization tasks
      */
@@ -250,7 +258,7 @@ public class Combiner extends Thread {
 
         clientPort = Integer.parseInt(properties.getProperty("clientPort")) + portIncrement;
         clientIP = properties.getProperty("clientIP");
-        combinerPort = Integer.parseInt(properties.getProperty("combinerPort")) + portIncrement;
+        combinerPort = Integer.parseInt(properties.getProperty("combinerPort")) + portIncrement + 10;
     }
 
     /**

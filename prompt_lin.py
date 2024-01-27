@@ -60,9 +60,9 @@ def run_scripts():
 # USE THIS ONE
 def run_scripts_test():
     # PLEASE USE PATHS ACCORDINGLY HERE
-    Popen("javac -cp " + classPath + " server1 > prompt_logs/s1.txt ", shell=True)
-    Popen("javac -cp " + classPath + " server2 > prompt_logs/s1.txt ", shell=True)
-    Popen("javac -cp " + classPath + " combiner > prompt_logs/comb.txt ", shell=True)
+    Popen("java -cp " + classPath + " src/server1 > prompt_logs/s1.txt ", shell=True)
+    Popen("java -cp " + classPath + " src/server2 > prompt_logs/s1.txt ", shell=True)
+    Popen("java -cp " + classPath + " src/combiner > prompt_logs/comb.txt ", shell=True)
 
 def getRowCount(req):
         f = open("config/encryptedSchemas.properties", "r")
@@ -122,7 +122,7 @@ while True:
 
                 # get numrows
                 numRows = 0
-                Popen("java -cp " + classPath + f" src/QueryParser \"getdbtbinfo\" {names[0]} {names[1]} > prompt_logs/client.txt")
+                Popen("java -cp " + classPath + f" src/QueryParser \"getdbtbinfo\" {names[0]} {names[1]} > prompt_logs/client.txt",shell=True)
 
                 # wait for the numrows to be written
 
