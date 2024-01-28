@@ -194,11 +194,6 @@ public class server1 {
         seedClient = Integer.parseInt(data[3]);
         result_01 = new int[numRows];
 
-        //String temp = "DATAAAAA: " + columnName + "\n" + addShare1_01 + "\n" + seedClient + "\n";
-        //Helper.printToFile(temp);
-
-        System.out.println("Server1: " + columnName + " " + addShare1_01 + " " + seedClient);
-
         // the list containing all the threads
         List<Thread> threadList = new ArrayList<>();
 
@@ -741,15 +736,10 @@ public class server1 {
             Socket combinerSocket;
             ObjectOutputStream outToCombiner;
             String[] dataReceived;
-
-            System.out.println("Server1: Socket Creation Started");
-
             try {
                 // reading the data sent by Client
                 inFromClient = new ObjectInputStream(clientSocket.getInputStream());
                 dataReceived = (String[]) inFromClient.readObject();
-
-                System.out.println("Server1: " + Arrays.toString(dataReceived));
 
                 String protocol = dataReceived[0];
                 
@@ -872,17 +862,12 @@ public class server1 {
     // starting server to listening for incoming connection
     private void startServer() throws IOException {
 
-
-        System.out.println("Server1: Starting Server");
-
         Socket socket;
 
         try {
             ServerSocket ss = new ServerSocket(serverPort);
-            System.out.println("Server1 Listening........");
 
             do {
-                System.out.println("Server1: Waiting for connection");
                 // listening over socket for connections
                 socket = ss.accept();
                 timestamps = new ArrayList<>();
@@ -891,15 +876,11 @@ public class server1 {
             } while (true);
         } catch (IOException ex) {
             log_02.log(Level.SEVERE, ex.getMessage());
-            System.out.println("Server1: No Longer Listening, an error occured");
-            System.out.println("Server1: " + ex.getMessage());
         }
     }
 
     // performs initialization tasks
     private static void doPreWork() {
-
-        System.out.println("Server1: Doing prework");
 
         // reads configuration properties of the server
         String pathName = "config/Server1.properties";
