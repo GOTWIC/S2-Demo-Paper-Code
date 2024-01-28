@@ -275,6 +275,7 @@ public class Client01 extends Thread {
      * @throws InterruptedException
      */
     public static String main(String[] args) throws InterruptedException {
+
         timestamps1.add(Instant.now());
 
         doPreWork(args);

@@ -502,7 +502,7 @@ public class combiner extends Thread {
 */  
     private void startCombiner() {
 
-        System.out.println("Combiner Listening........");
+        //System.out.println("Combiner Listening........");
 
         Socket serverSocket;
         Socket clientSocket;

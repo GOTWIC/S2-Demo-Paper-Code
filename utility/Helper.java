@@ -29,6 +29,18 @@ public class Helper {
     private static String mulMod = "7262480193747257723624289403070128438206601920881360416052686029563070255303828996727";
     private static int addMod = 100000007;
 
+    public static void printToFile(String str){
+        // write the contents of str into prompt_logs/degub.txt
+        try {
+            FileWriter writer = new FileWriter("prompt_logs/debug.txt");
+            BufferedWriter bufferedWriter = new BufferedWriter(writer);
+            bufferedWriter.write(str);
+            bufferedWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public static Boolean getServer() {
         return true;
