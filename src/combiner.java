@@ -597,7 +597,7 @@ public class combiner extends Thread {
 
                     doWork_05();
                     // sending data from the client
-                    clientSocket = new Socket(clientIP, clientPort);
+                    clientSocket = new Socket(clientIP, clientPort + 10);
                     ObjectOutputStream outToClient = new ObjectOutputStream(clientSocket.getOutputStream());
                     outToClient.writeObject(result_05);
                     clientSocket.close();
