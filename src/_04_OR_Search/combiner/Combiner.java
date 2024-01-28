@@ -106,7 +106,6 @@ public class Combiner extends Thread {
     private static void doWork_04() {
         // The list containing all the threads
 
-
         // extracting each server data from data received
         for (int i = 0; i < serverResult_04.size(); i++) {
             switch (serverResult_04.get(i)[serverResult_04.get(i).length - 1][0].intValue()) {

@@ -48,11 +48,12 @@ def run_scripts():
 
 
 def run_scripts_test():
-    Popen("java -cp \"" + classPath + "\" src/" + "server1" + " > prompt_logs/s" + "1" + ".txt", shell = False)
-    Popen("java -cp \"" + classPath + "\" src/" + "server2" + " > prompt_logs/s" + "2" + ".txt", shell = False)
-    Popen("java -cp \"" + classPath + "\" src/" + "server3" + " > prompt_logs/s" + "3" + ".txt", shell = False)
-    Popen("java -cp \"" + classPath + "\" src/" + "server4" + " > prompt_logs/s" + "4s  " + ".txt", shell = False)
-    Popen("java -cp \"" + classPath + "\" src/" + "combiner" + " > prompt_logs/comb1" + ".txt", shell = False)
+    Popen("java -cp \"" + classPath + "\" src/server1" + " > prompt_logs/s" + "1" + ".txt", shell = False)
+    Popen("java -cp \"" + classPath + "\" src/server2" + " > prompt_logs/s" + "2" + ".txt", shell = False)
+    Popen("java -cp \"" + classPath + "\" src/server3" + " > prompt_logs/s" + "3" + ".txt", shell = False)
+    Popen("java -cp \"" + classPath + "\" src/server4" + " > prompt_logs/s" + "4s  " + ".txt", shell = False)
+    Popen("java -cp \"" + classPath + "\" src/combiner" + " > prompt_logs/comb1" + ".txt", shell = False)
+    Popen("java -cp \"" + classPath + "\" src/_04_OR_Search/combiner/Combiner" + " > prompt_logs/comb2" + ".txt", shell = False)
 
 def getRowCount(req):
         f = open("config/encryptedSchemas.properties", "r")

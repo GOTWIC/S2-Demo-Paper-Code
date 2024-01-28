@@ -247,7 +247,7 @@ public class Client04 extends Thread {
         // server data preparation
         String[] data;
 
-        data = new String[]{"or", String.valueOf(numServers)};
+        data = new String[]{String.valueOf(numServers)};
         combiner = new Client04(combinerIP, combinerPort, data);
 
         data = new String[]{"or", Helper.strArrToStr(columnName), Helper.strArrToStr(helper(0)), String.valueOf(seedClient)};

@@ -79,6 +79,10 @@ public class QueryParser {
         String[] arguments = new String[]{String.valueOf(numRows), databaseName, tableName,columns_to_split};
         Database_Table_Creator.main(arguments);
 
+        Properties properties = Helper.readPropertiesFile("config/environment.properties");
+
+        String basepath = properties.getProperty("base_path");
+
         // Create server tables 
         for (int i = 0; i < 4; i++) {
             String createTableQuery = 
@@ -94,7 +98,7 @@ public class QueryParser {
             """
 LOAD DATA LOCAL INFILE 
             """ 
-            + "'C:/Users/shoum/Documents/VLDBPaperDemo/S2-VLDB-2023-main/data/shares/ServerTable" + String.valueOf(i+1) + ".csv' " + 
+            + "'" + basepath + "/data/shares/ServerTable" + String.valueOf(i+1) + ".csv' " + 
             """
 INTO TABLE
             """
@@ -254,7 +258,7 @@ LINES TERMINATED BY '\\n'
             if(colValue.startsWith("'") && colValue.endsWith("'"))
                 colValue = colValue.substring(1, colValue.length() - 1);
 
-            // we have a special case where if the value is from a column with type 3, and the value doesn't have a decimal, then we need to add a .0 to the end of the value
+            // we have a special case where if the value is from a column with type 3, and the value doesnt have a decimal, then we need to add a .0 to the end of the value
             if(columnListWithNumTypes.get(colName.toLowerCase()) == 3 && (Double.parseDouble(colValue) == (int) Double.parseDouble(colValue))){
                 colValue = String.valueOf((int) Double.parseDouble(colValue)) + ".0";
             }
@@ -442,7 +446,9 @@ LINES TERMINATED BY '\\n'
 
         query = query.replace("enc ", "");
 
-        int queryType = getQueryType(query);   
+        int queryType = getQueryType(query); 
+
+        //System.out.println("Query Type: " + queryType);
 
         if(queryType == 0){
             createTable(query);
@@ -469,7 +475,7 @@ LINES TERMINATED BY '\\n'
             debug += columnValues.toString() + "\n";
             debug += protocol + "\n";
             debug += type + "\n";
-            System.out.println(debug);
+            //System.out.println(debug);
         }
 
         System.gc();

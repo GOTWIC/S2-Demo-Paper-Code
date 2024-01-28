@@ -1,68 +1,73 @@
-from subprocess import Popen
+#from subprocess import Popen
 import time
 from configobj import ConfigObj
+import subprocess
 
-#basepath = "/home/ubuntu/S2-VLDB-2023-main"
-classPath = ".:mysqlConnector/mysql-connector-java-8.0.29.jar"
+classPath = ".:/home/ubuntu/S2-VLDB-2023-main/mysqlConnector/mysql-connector-java-8.0.29.jar"
 
 # Compile
-
 def compile_scripts():
-
-    # Helper
-    Popen("javac -cp " + classPath + " utility/Helper.java", shell=True)
-
-    # convertCSV
-    Popen("javac -cp " + classPath + " src/convertCSV.java", shell=True)
-
-    # constant
-    Popen("javac -cp " + classPath + " constant/Constants.java", shell=True)
-
     # Database Table Creator
-    Popen("javac -cp " + classPath + " src/_00_Database_Table_Creator/*.java", shell=True)
+    #Popen("javac -cp " + classPath + " src/_00_Database_Table_Creator/*.java")
+    subprocess.run(["javac", "-cp", classPath, "src/_00_Database_Table_Creator/Database_Table_Creator.java"])
 
     # One Column Number Search
-    Popen("javac -cp " + classPath + " src/_01_oneColumnNumberSearch/client/*.java src/_01_oneColumnNumberSearch/combiner/*.java src/_01_oneColumnNumberSearch/server/*.java", shell=True)
+    #Popen("javac -cp " + classPath + " src/_01_oneColumnNumberSearch/client/*.java src/_01_oneColumnNumberSearch/combiner/*.java src/_01_oneColumnNumberSearch/server/*.java")
+    subprocess.run(["javac", "-cp", classPath, "src/_01_oneColumnNumberSearch/client/Client01.java"])
     
     # One Column String Search
-    Popen("javac -cp " + classPath + " src/_02_oneColumnStringSearch/client/*.java src/_02_oneColumnStringSearch/combiner/*.java src/_02_oneColumnStringSearch/server/*.java", shell=True)
+    #Popen("javac -cp " + classPath + " src/_02_oneColumnStringSearch/client/*.java src/_02_oneColumnStringSearch/combiner/*.java src/_02_oneColumnStringSearch/server/*.java")
+    subprocess.run(["javac", "-cp", classPath, "src/_02_oneColumnStringSearch/client/Client02.java"])
 
     # AND Search
-    Popen("javac -cp " + classPath + " src/_03_AND_Search/client/*.java src/_03_AND_Search/combiner/*.java src/_03_AND_Search/server/*.java", shell=True)
+    #Popen("javac -cp " + classPath + " src/_03_AND_Search/client/*.java src/_03_AND_Search/combiner/*.java src/_03_AND_Search/server/*.java")
+    subprocess.run(["javac", "-cp", classPath, "src/_03_AND_Search/client/Client03.java"])
 
     # OR Search
-    Popen("javac -cp " + classPath + " src/_04_OR_Search/client/*.java src/_04_OR_Search/combiner/*.java src/_04_OR_Search/server/*.java", shell=True)
+    #Popen("javac -cp " + classPath + " src/_04_OR_Search/client/*.java src/_04_OR_Search/combiner/*.java src/_04_OR_Search/server/*.java")
+    subprocess.run(["javac", "-cp", classPath, "src/_04_OR_Search/client/Client04.java"])
+    subprocess.run(["javac", "-cp", classPath, "src/_04_OR_Search/combiner/Combiner.java"])
 
     # Multiplicative Row Fetch
-    Popen("javac -cp " + classPath + " src/_05_Multiplicative_Row_Fetch/client/*.java src/_05_Multiplicative_Row_Fetch/combiner/*.java src/_05_Multiplicative_Row_Fetch/server/*.java", shell=True)
+    #Popen("javac -cp " + classPath + " src/_05_Multiplicative_Row_Fetch/client/*.java src/_05_Multiplicative_Row_Fetch/combiner/*.java src/_05_Multiplicative_Row_Fetch/server/*.java")
+    subprocess.run(["javac", "-cp", classPath, "src/_05_Multiplicative_Row_Fetch/client/Client05.java"])
 
     # Helper
-    Popen("javac -cp " + classPath + " utility/Helper.java", shell=True)
+    #Popen("javac -cp " + classPath + " utility/Helper.java")
+    subprocess.run(["javac", "-cp", classPath, "utility/Helper.java"])
 
     # Everything Else
-    Popen("javac -cp " + classPath + " src/*.java", shell=True)
+    #Popen("javac -cp " + classPath + " src/*.java")
+    subprocess.run(["javac", "-cp", classPath, "src/server1.java"])
+    subprocess.run(["javac", "-cp", classPath, "src/server2.java"])
+    subprocess.run(["javac", "-cp", classPath, "src/server3.java"])
+    subprocess.run(["javac", "-cp", classPath, "src/server4.java"])
+    subprocess.run(["javac", "-cp", classPath, "src/combiner.java"])
+    subprocess.run(["javac", "-cp", classPath, "src/QueryParser.java"])
+    subprocess.run(["javac", "-cp", classPath, "src/convertCSV.java"])
     
 
-# DO NOT USE
-def run_scripts():
-    serverCounts = [2,2,2,4,4]
-    folderNames = ["_01_oneColumnNumberSearch", "_02_oneColumnStringSearch", "_03_AND_Search", "_04_OR_Search", "_05_Multiplicative_Row_Fetch"]
-
-    serverCounter = 0
-
-    for i in range(len(serverCounts)):
-        for j in range(serverCounts[i]):
-            Popen("java -cp " + classPath + " src/" + folderNames[i] + "/server/Server" + str(j+1) + " > prompt_logs/s" + str(serverCounter) + ".txt", shell = True)
-            serverCounter += 1
-        Popen("java -cp " + classPath + " src/" + folderNames[i] + "/combiner/Combiner > prompt_logs/comb" + str(i)  + ".txt", shell = True)
-
-
-# USE THIS ONE
 def run_scripts_test():
-    # PLEASE USE PATHS ACCORDINGLY HERE
-    Popen("java -cp " + classPath + " src/server1 > prompt_logs/s1.txt ", shell=True)
-    Popen("java -cp " + classPath + " src/server2 > prompt_logs/s1.txt ", shell=True)
-    Popen("java -cp " + classPath + " src/combiner > prompt_logs/comb.txt ", shell=True)
+    #Popen("java -cp " + classPath + " src/server1" + " > prompt_logs/s" + "1" + ".txt", shell = False)
+    #Popen("java -cp " + classPath + " src/server2" + " > prompt_logs/s" + "2" + ".txt", shell = False)
+    #Popen("java -cp " + classPath + " src/server3" + " > prompt_logs/s" + "3" + ".txt", shell = False)
+    #Popen("java -cp " + classPath + " src/server4" + " > prompt_logs/s" + "4s  " + ".txt", shell = False)
+    #Popen("java -cp " + classPath + " src/combiner" + " > prompt_logs/comb1" + ".txt", shell = False)
+    #Popen("java -cp " + classPath + " src/_04_OR_Search/combiner/Combiner" + " > prompt_logs/comb2" + ".txt", shell = False)
+
+    ao_scripts = []
+    ao_scripts.append(f"tmux new-session -d 'java -cp {classPath} src/server1 > prompt_logs/s1.txt'")
+    ao_scripts.append(f"tmux new-session -d 'java -cp {classPath} src/server2 > prompt_logs/s2.txt'")
+    ao_scripts.append(f"tmux new-session -d 'java -cp {classPath} src/server3 > prompt_logs/s3.txt'")
+    ao_scripts.append(f"tmux new-session -d 'java -cp {classPath} src/server4 > prompt_logs/s4.txt'")
+    ao_scripts.append(f"tmux new-session -d 'java -cp {classPath} src/combiner > prompt_logs/comb1.txt'")
+    ao_scripts.append(f"tmux new-session -d 'java -cp {classPath} src/_04_OR_Search/combiner/Combiner > prompt_logs/comb2.txt'")
+
+    #subprocess.run(["java", "-cp", classPath, "src/combiner", ">", "prompt_logs/comb1.txt"],shell=True)
+    #subprocess.run(["java", "-cp", classPath, "src/_04_OR_Search/combiner/Combiner", ">", "prompt_logs/comb2.txt"],shell=True)
+
+    for ao_script in ao_scripts:
+        subprocess.run(ao_script,shell=True)
 
 def getRowCount(req):
         f = open("config/encryptedSchemas.properties", "r")
@@ -95,7 +100,8 @@ def updateConfigFiles(db,tbl,r):
 compile_scripts()
 run_scripts_test()
 
-Popen("clear")
+#Popen("clear")
+subprocess.run(["clear"])
 
 time.sleep(1)
        
@@ -122,7 +128,8 @@ while True:
 
                 # get numrows
                 numRows = 0
-                Popen("java -cp " + classPath + f" src/QueryParser \"getdbtbinfo\" {names[0]} {names[1]} > prompt_logs/client.txt",shell=True)
+                #Popen("java -cp " + classPath + f" src/QueryParser \"getdbtbinfo\" {names[0]} {names[1]} > prompt_logs/client.txt")
+                subprocess.run(["java", "-cp", classPath, "src/QueryParser", "getdbtbinfo", names[0], names[1], ">", "prompt_logs/client.txt"])
 
                 # wait for the numrows to be written
 
@@ -171,7 +178,8 @@ while True:
         #if "'" in query:
             #query = query.replace("'", "'\\\"'")
 
-        Popen("java -cp " + classPath + f" src/QueryParser \"{query}\" > prompt_logs/client.txt")
+        #Popen("java -cp " + classPath + f" src/QueryParser \"{query}\" > prompt_logs/client.txt")
+        subprocess.run(["java", "-cp", classPath, "src/QueryParser",  query , ">", "prompt_logs/client.txt"])
         
         # Check for finish flag from the query parser
         while True:

@@ -728,6 +728,7 @@ public class server2 {
                     for (int i = 0; i < result_01.length; i++) {
                         newresult[i + 1] = result_01[i];
                     }
+                    //System.out.println(Helper.arrToStr(newresult));
                     outToCombiner.writeObject(newresult);
                     combinerSocket.close();
                 }

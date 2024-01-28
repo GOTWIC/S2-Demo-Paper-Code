@@ -509,6 +509,7 @@ public class combiner extends Thread {
             //System.out.println("Combiner Listening........");
 
             while (true) {
+
                 // listening over the socket for connections
                 serverSocket = ss.accept();
                 // reading data from the server
@@ -517,9 +518,11 @@ public class combiner extends Thread {
 
                 //System.out.println("Protocol: " + protocol);
 
-                if (socketCreations.size() == 2 && (protocol == 1 || protocol == 2 || protocol == 3)) {
+                //  && (protocol == 1 || protocol == 2 || protocol == 3)
+                if (socketCreations.size() == 2) {
                     timestamps = new ArrayList<>();
                     timestamps.add(Instant.now());
+
                     for (SocketCreation socketCreation : socketCreations) {
                         serverJobs.add(threadPool.submit(socketCreation));
                     }
@@ -527,6 +530,7 @@ public class combiner extends Thread {
                         future.get();
 
                     if(protocol == 1){
+
                         doWork_01();
 
                         // sending data from the client
@@ -568,7 +572,10 @@ public class combiner extends Thread {
                         serverResult_03 = Collections.synchronizedList(new ArrayList<>());
                     }
 
-
+                    else if(protocol == 5){
+                        // we might not be done yet, continue listening for data
+                        continue;
+                    }
                     serverJobs = new ArrayList<>();
                     socketCreations = new ArrayList<>();
 
@@ -577,7 +584,7 @@ public class combiner extends Thread {
 //                    System.out.println(Helper.getProgramTimes(timestamps));
 //                    log.log(Level.INFO, "Total Combiner time:" + Helper.getProgramTimes(timestamps));
                 }
-            
+
                 if (socketCreations.size() == 4) {
                     timestamps = new ArrayList<>();
                     timestamps.add(Instant.now());
@@ -586,6 +593,8 @@ public class combiner extends Thread {
                     }
                     for (Future<?> future : serverJobs)
                         future.get();
+
+
                     doWork_05();
                     // sending data from the client
                     clientSocket = new Socket(clientIP, clientPort);
@@ -603,9 +612,10 @@ public class combiner extends Thread {
                     // calculating the time spent
                     timestamps.add(Instant.now());
                 }
-                
             
             }
+    
+       
         } catch (IOException | ExecutionException | InterruptedException ex) {
             log_01.log(Level.SEVERE, ex.getMessage());
         }
