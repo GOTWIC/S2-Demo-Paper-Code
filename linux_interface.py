@@ -97,7 +97,7 @@ def kill_processes():
 
 def quitPrompt():
     kill_processes()
-    print("Byeeee")
+    print("\nByeeee")
     sys.exit()
 
 def check_compiled():
