@@ -305,8 +305,8 @@ public class Client05 extends Thread {
 
         numRows = Integer.parseInt(properties.getProperty("numRows"));
 
-
-        clientPort = Integer.parseInt(properties.getProperty("clientPort")) + portIncrement; 
+        // the +10 prevents it clashing with one of the first four programs when doing a * query
+        clientPort = Integer.parseInt(properties.getProperty("clientPort")) + portIncrement + 10; 
         server1IP = properties.getProperty("server1IP");
         server1Port = Integer.parseInt(properties.getProperty("server1Port")) + portIncrement;
         server2IP = properties.getProperty("server2IP");

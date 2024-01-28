@@ -132,6 +132,8 @@ public class combiner extends Thread {
 
         server1_01 = serverResult_01.get(0);
         server2_01 = serverResult_01.get(1);
+        System.out.println("Server 1: " + Helper.arrToStr(server1_01));
+        System.out.println("Server 2: " + Helper.arrToStr(server2_01));
         List<Thread> threadList = new ArrayList<>();
 
         // create threads and add them to threadlist
@@ -500,6 +502,8 @@ public class combiner extends Thread {
 */  
     private void startCombiner() {
 
+        System.out.println("Combiner Listening........");
+
         Socket serverSocket;
         Socket clientSocket;
         ArrayList<Future> serverJobs = new ArrayList<>();
@@ -597,7 +601,7 @@ public class combiner extends Thread {
 
                     doWork_05();
                     // sending data from the client
-                    clientSocket = new Socket(clientIP, clientPort);
+                    clientSocket = new Socket(clientIP, clientPort + 10);
                     ObjectOutputStream outToClient = new ObjectOutputStream(clientSocket.getOutputStream());
                     outToClient.writeObject(result_05);
                     clientSocket.close();
