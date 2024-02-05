@@ -52,12 +52,12 @@ def compile_scripts():
     
 def run_scripts():
     ao_scripts = []
-    ao_scripts.append(f"tmux new-session -d 'java -cp {classPath} src/server1 > prompt_logs/s1.txt'")
-    ao_scripts.append(f"tmux new-session -d 'java -cp {classPath} src/server2 > prompt_logs/s2.txt'")
-    ao_scripts.append(f"tmux new-session -d 'java -cp {classPath} src/server3 > prompt_logs/s3.txt'")
-    ao_scripts.append(f"tmux new-session -d 'java -cp {classPath} src/server4 > prompt_logs/s4.txt'")
-    ao_scripts.append(f"tmux new-session -d 'java -cp {classPath} src/combiner > prompt_logs/comb1.txt'")
-    ao_scripts.append(f"tmux new-session -d 'java -cp {classPath} src/_04_OR_Search/combiner/Combiner > prompt_logs/comb2.txt'")
+    ao_scripts.append(f"exec java -cp {classPath} src/server1 > prompt_logs/s1.txt")
+    ao_scripts.append(f"exec java -cp {classPath} src/server2 > prompt_logs/s2.txt")
+    ao_scripts.append(f"exec java -cp {classPath} src/server3 > prompt_logs/s3.txt")
+    ao_scripts.append(f"exec java -cp {classPath} src/server4 > prompt_logs/s4.txt")
+    ao_scripts.append(f"exec java -cp {classPath} src/combiner > prompt_logs/comb1.txt")
+    ao_scripts.append(f"exec java -cp {classPath} src/_04_OR_Search/combiner/Combiner > prompt_logs/comb2.txt")
 
     for ao_script in ao_scripts:
         p = subprocess.Popen(ao_script,shell=True)
@@ -93,7 +93,7 @@ def updateConfigFiles(db,tbl,r):
 
 def kill_processes():
     for p in subprocesses:
-        p.terminate()
+        p.kill()
 
 def quitPrompt():
     kill_processes()
